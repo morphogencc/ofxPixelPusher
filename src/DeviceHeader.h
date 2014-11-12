@@ -15,7 +15,7 @@ enum DeviceType {
 
 class DeviceHeader {
  public:
-  DeviceHeader(unsigned char* packet[], int packetLength);
+  DeviceHeader(unsigned char* packet, int packetLength);
   ~DeviceHeader();
   std::string getMacAddressString();
   std::string getIpAddressString();

@@ -19,6 +19,8 @@ class DiscoveryListener {
  private:
   ofxUDPManager udpConnection;
   int newMessage;
+  vector<char> incomingUdpMessage;
+  vector<unsigned char> udpMessage;
   static const int incomingPacketSize = 76;
   static const int portNo = 7331;
 };

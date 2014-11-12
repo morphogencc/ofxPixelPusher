@@ -1,14 +1,14 @@
 #include "DeviceHeader.h"
 
-DeviceHeader::DeviceHeader(unsigned char* packet[], int packetLength) {
+DeviceHeader::DeviceHeader(unsigned char* packet, int packetLength) {
   if(packetLength < sHeaderLength) {
     std::cout << "Incorrect package length in DeviceHeader constructor!";
   }
 
   memcpy(&mMacAddress[0], &packet[0], 6);
   memcpy(&mIpAddress[0], &packet[6], 4);
-  mDeviceType = static_cast<DeviceType>(*packet[10]);
-  mProtocolVersion = *packet[11];
+  mDeviceType = static_cast<DeviceType>(packet[10]);
+  mProtocolVersion = packet[11];
   memcpy(&mVendorId, &packet[12], 2);
   memcpy(&mProductId, &packet[14], 2);
   memcpy(&mHardwareRevision, &packet[16], 2);

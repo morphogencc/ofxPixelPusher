@@ -2,7 +2,7 @@
 
 DeviceHeader::DeviceHeader(unsigned char* packet, int packetLength) {
   if(packetLength < sHeaderLength) {
-    std::cout << "Incorrect package length in DeviceHeader constructor!";
+    ofLog(OF_LOG_ERROR, "Incorrect package length in DeviceHeader constructor!");
   }
 
   memcpy(&mMacAddress[0], &packet[0], 6);
@@ -14,9 +14,16 @@ DeviceHeader::DeviceHeader(unsigned char* packet, int packetLength) {
   memcpy(&mHardwareRevision, &packet[16], 2);
   memcpy(&mSoftwareRevision, &packet[18], 2);
   memcpy(&mLinkSpeed, &packet[20], 4);
+
+  if(mSoftwareRevision < mOldestAcceptableSoftwareRevision) {
+    ofLog(OF_LOG_WARNING, "This PixelPusher Library requires firmware revision %f", mOldestAcceptableSoftwareRevision / 100.0);
+    ofLog(OF_LOG_WARNING, "This PixelPusher is using %f", mSoftwareRevision / 100.0);
+    ofLog(OF_LOG_WARNING, "This is not expected to work.  Please update your PixelPusher.");
+  }
         
   mPacketRemainderLength = packetLength - sHeaderLength;
-  mPacketRemainder = shared_ptr<uint8_t>( new uint8_t[mPacketRemainderLength]);
+  //replace this with std::vector and std::vector::assign()
+  mPacketRemainder = shared_ptr<unsigned char>(new unsigned char[mPacketRemainderLength]);
   memcpy(&mPacketRemainder.get()[0], &packet[sHeaderLength], mPacketRemainderLength);
 
   /*
@@ -41,13 +48,13 @@ DeviceHeader::~DeviceHeader() {
 
 std::string DeviceHeader::getMacAddressString() {
   char strMacAddress[24];
-  sprintf(strMacAddress, "0x%02X:0x%02X:0x%02X:0x%02X:0x%02X:0x%02X\n", mMacAddress[0], mMacAddress[1], mMacAddress[2], mMacAddress[3], mMacAddress[4], mMacAddress[5]);
+  sprintf(strMacAddress, "%02X:%02X:%02X:%02X:%02X:%02X", mMacAddress[0], mMacAddress[1], mMacAddress[2], mMacAddress[3], mMacAddress[4], mMacAddress[5]);
   return strMacAddress;
 }
 
 std::string DeviceHeader::getIpAddressString() {
   char strIpAddress[24];
-  sprintf(strIpAddress, "%d.%d.%d.%d\n", mIpAddress[0], mIpAddress[1], mIpAddress[2], mIpAddress[3]);
+  sprintf(strIpAddress, "%u.%u.%u.%u\n", mIpAddress[0], mIpAddress[1], mIpAddress[2], mIpAddress[3]);
   return strIpAddress;
 }
 

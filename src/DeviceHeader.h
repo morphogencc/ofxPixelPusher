@@ -3,7 +3,8 @@
 #include <string>
 #include <tr1/memory>
 #include <stdio.h>
-#include "ByteUtils.h"
+#include <iostream>
+#include "ofMain.h"
 
 using namespace std::tr1;
 
@@ -31,8 +32,9 @@ class DeviceHeader {
   bool isMulticast();
  private:
   static const int sHeaderLength = 24;
-  char mMacAddress[6];
-  char mIpAddress[4];
+  static const int mOldestAcceptableSoftwareRevision = 121;
+  unsigned char mMacAddress[6];
+  unsigned char mIpAddress[4];
   DeviceType mDeviceType;
   unsigned char mProtocolVersion;
   short mVendorId;

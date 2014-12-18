@@ -173,6 +173,11 @@ obj/osx/Release/src/main.o: src/main.cpp src/testApp.h \
   ../../../addons/ofxNetwork/src/ofxTCPManager.h \
   ../../../addons/ofxNetwork/src/ofxTCPServer.h \
   ../../../addons/ofxNetwork/src/ofxUDPManager.h \
+  ../../../addons/PixelPusherCPP/src/PixelPusher.h \
+  ../../../addons/PixelPusherCPP/src/Strip.h \
+  ../../../addons/PixelPusherCPP/src/Pixel.h \
+  ../../../addons/PixelPusherCPP/src/ByteUtils.h \
+  ../../../addons/PixelPusherCPP/src/DeviceHeader.h \
   ../../../libs/openFrameworks/app/ofAppGlutWindow.h
 
 src/testApp.h:
@@ -524,5 +529,15 @@ src/testApp.h:
 ../../../addons/ofxNetwork/src/ofxTCPServer.h:
 
 ../../../addons/ofxNetwork/src/ofxUDPManager.h:
+
+../../../addons/PixelPusherCPP/src/PixelPusher.h:
+
+../../../addons/PixelPusherCPP/src/Strip.h:
+
+../../../addons/PixelPusherCPP/src/Pixel.h:
+
+../../../addons/PixelPusherCPP/src/ByteUtils.h:
+
+../../../addons/PixelPusherCPP/src/DeviceHeader.h:
 
 ../../../libs/openFrameworks/app/ofAppGlutWindow.h:

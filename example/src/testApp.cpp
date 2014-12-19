@@ -2,13 +2,11 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
-  listener = new DiscoveryListener();
-
+  listener = DiscoveryListener::getInstance();
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-  listener->update();
 }
 
 //--------------------------------------------------------------
@@ -58,4 +56,10 @@ void testApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void testApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+void testApp::exit() {
+  if(listener != NULL) {
+    listener->stopThread();
+  }
 }

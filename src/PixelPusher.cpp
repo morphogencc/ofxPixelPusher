@@ -63,6 +63,8 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
     memcpy(&mSegments, &mPacket.get()[36+stripFlagSize], 4);
     memcpy(&mPowerDomain, &mPacket.get()[40+stripFlagSize], 4);
   }
+
+  configureNetwork();
 }
 
 PixelPusher::~PixelPusher() {
@@ -267,4 +269,21 @@ bool PixelPusher::isEqual(shared_ptr<PixelPusher> pusher) {
   if(getPusherFlags() != pusher->getPusherFlags()) {
     return false;
   }
+}
+
+bool PixelPusher::isAlive() {
+  if((ofGetElapsedTimef() - mLastPingAt) < mTimeoutTime) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+void PixelPusher::configureNetwork() {
+  
+}
+
+void PixelPusher::threadedFunction() {
+  
 }

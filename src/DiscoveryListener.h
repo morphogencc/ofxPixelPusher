@@ -17,24 +17,28 @@
 
 using namespace std::tr1;
 
-class DiscoveryListener {
+class DiscoveryListener : public ofThread {
  public:
+  static DiscoveryListener* getInstance();
+  void freeInstance();
+ private:
   DiscoveryListener();
   ~DiscoveryListener();
+  void threadedFunction();
   void update();
- private:
   void addNewPusher(std::string macAddress, shared_ptr<PixelPusher> pusher);
   void updatePusher(std::string macAddress, shared_ptr<PixelPusher> pusher);
-  ofxUDPManager udpConnection;
-  int newMessage;
-  std::vector<char> incomingUdpMessage;
-  std::vector<unsigned char> udpMessage;
-  static const int incomingPacketSize = 76;
-  static const int portNo = 7331;
+  void updatePusherMap();
+  static DiscoveryListener* mDiscoveryThread;
+  ofxUDPManager mUdpConnection;
+  int mMessageFlag;
+  std::vector<char> mIncomingUdpMessage;
+  std::vector<unsigned char> mUdpMessage;
+  static const int mIncomingPacketSize = 76;
+  static const int mPort = 7331;
   bool mAutoThrottle;
   std::map<std::string, shared_ptr<PixelPusher> > mPusherMap;
   std::map<std::string, long> mLastSeenMap;
   std::multimap<long, shared_ptr<PixelPusher> > mGroupMap;
-  //DiscoveryThread discover;
   //SceneThread scene;
 };

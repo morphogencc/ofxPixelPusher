@@ -13,14 +13,13 @@
 #include <string>
 #include <tr1/memory>
 #include "Strip.h"
-#include "ByteUtils.h"
 #include "ofMain.h"
 #include "ofxNetwork.h"
 #include "DeviceHeader.h"
 
 using namespace std::tr1;
 
-class PixelPusher {
+class PixelPusher : public ofThread {
  public:
   PixelPusher(DeviceHeader* header);
   ~PixelPusher();
@@ -52,7 +51,12 @@ class PixelPusher {
   void copyHeader(shared_ptr<PixelPusher> pusher);
   void updateVariables(shared_ptr<PixelPusher> pusher);
   bool isEqual(shared_ptr<PixelPusher> pusher);
+  bool isAlive();
  private:
+  void configureNetwork();
+  void threadedFunction();
+  static const int mTimeoutTime = 5;
+  ofxUdpConnection mUdpConnection;
   long mPusherFlags;
   DeviceHeader* mDeviceHeader;
   long mPacketNumber;

@@ -114,7 +114,7 @@ void DiscoveryListener::update() {
 void DiscoveryListener::addNewPusher(std::string macAddress, shared_ptr<PixelPusher> pusher) {
   mPusherMap.insert(std::make_pair(macAddress, pusher));
   mGroupMap.insert(std::make_pair(pusher->getGroupId(), pusher));
-  //pusher->createCardThread( mIoService );
+  pusher->createCardThread();
 }
 
 void DiscoveryListener::updatePusher(std::string macAddress, shared_ptr<PixelPusher> pusher) {

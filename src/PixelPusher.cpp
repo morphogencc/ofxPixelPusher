@@ -122,20 +122,18 @@ std::string PixelPusher::getIpAddress() {
 
 void PixelPusher::sendPacket() {
   std::deque<shared_ptr<Strip> > remainingStrips = getTouchedStrips();
-  int stripsPerPacket = getMaxStripsPerPacket();
-  int numberOfStrips = getNumberOfStrips();
   bool payload = false;
   long packetLength = 0;
   mThreadDelay = 16;
 
   if(getUpdatePeriod() > 100000) {
-    mThreadDelay = (16 / (numberOfStrips / stripsPerPacket));
+    mThreadDelay = (16 / (mStripsAttached / mMaxStripsPerPacket));
   }
   else if(getUpdatePeriod() > 1000) {
     mThreadDelay = (getUpdatePeriod() / 1000) + 1;
   }
   else {
-    mThreadDelay = ((1000.0 / mFrameLimit) / (numberOfStrips / stripsPerPacket));
+    mThreadDelay = ((1000.0 / mFrameLimit) / (mStripsAttached / mMaxStripsPerPacket));
   }
   
   long totalDelay = mThreadDelay + mThreadExtraDelay + getExtraDelay();
@@ -160,12 +158,13 @@ void PixelPusher::sendPacket() {
   */
 
   while(!remainingStrips.empty()) {
+    ofLog(OF_LOG_NOTICE, "Sending data to PixelPusher %s at %s", getMacAddress().c_str(), getIpAddress().c_str());
     payload = false;
     packetLength = 0;
     memcpy(&mPacket[0], &mPacketNumber, 4);
     packetLength += 4;
     
-    for(int i = 0; i < stripsPerPacket; i++) {
+    for(int i = 0; i < mMaxStripsPerPacket; i++) {
       if(remainingStrips.empty()) {
 	break;
       }
@@ -187,7 +186,7 @@ void PixelPusher::sendPacket() {
       mPacketNumber++;
       payload = false;
       mUdpConnection.Send(reinterpret_cast<char *>(mPacket), packetLength);
-      ofLog(OF_LOG_NOTICE, "Sent data to PixelPusher %s at %s", getMacAddress().c_str(), getIpAddress().c_str());
+      ofLog(OF_LOG_NOTICE, "Closing pixelpusher %s thread", getMacAddress().c_str());
       this->sleep(totalDelay);
     }
   }

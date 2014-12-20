@@ -12,9 +12,9 @@
 #include <list>
 #include <string>
 #include <tr1/memory>
-#include "Strip.h"
 #include "ofMain.h"
 #include "ofxNetwork.h"
+#include "Strip.h"
 #include "DeviceHeader.h"
 
 using namespace std::tr1;
@@ -25,15 +25,15 @@ class PixelPusher : public ofThread {
   ~PixelPusher();
   int getNumberOfStrips();
   std::deque<shared_ptr<Strip> > getStrips();
-  void addStrip(shared_ptr<Strip> strip);
+  std::deque<shared_ptr<Strip> > getTouchedStrips();
   shared_ptr<Strip> getStrip(int stripNumber);
+  void addStrip(shared_ptr<Strip> strip);
   int getMaxStripsPerPacket();
   int getPixelsPerStrip(int stripNumber);
   void setStripValues(int stripNumber, unsigned char red, unsigned char green, unsigned char blue);
   void setStripValues(int stripNumber, std::vector<shared_ptr<Pixel> > pixels);
   std::string getMacAddress();
   std::string getIpAddress();
-  //void sendPacket();
   long getGroupId();
   long getDeltaSequence();
   void increaseExtraDelay(long delay);
@@ -52,15 +52,18 @@ class PixelPusher : public ofThread {
   void updateVariables(shared_ptr<PixelPusher> pusher);
   bool isEqual(shared_ptr<PixelPusher> pusher);
   bool isAlive();
+  void createCardThread();
  private:
-  void configureNetwork();
   void threadedFunction();
+  void createStrips();
+  void sendPacket();
   static const int mTimeoutTime = 5;
-  ofxUdpConnection mUdpConnection;
+  static const int mFrameLimit = 60;
+  ofxUDPManager mUdpConnection;
   long mPusherFlags;
   DeviceHeader* mDeviceHeader;
   long mPacketNumber;
-  shared_ptr<unsigned char> mPacket;
+  unsigned char* mPacket;
   short mPort;
   short mStripsAttached;
   short mMaxStripsPerPacket;
@@ -81,6 +84,8 @@ class PixelPusher : public ofThread {
   double mLastPingAt;
   double mResetSentAt;
   bool mSendReset;
+  long mThreadDelay;
+  long mThreadExtraDelay;
   std::vector<unsigned char> mStripFlags;
   std::deque<shared_ptr<Strip> > mStrips;
 };

@@ -21,6 +21,7 @@ class DiscoveryListener : public ofThread {
  public:
   static DiscoveryListener* getInstance();
   void freeInstance();
+  int getFrameLimit();
  private:
   DiscoveryListener();
   ~DiscoveryListener();
@@ -37,6 +38,7 @@ class DiscoveryListener : public ofThread {
   static const int mIncomingPacketSize = 76;
   static const int mPort = 7331;
   bool mAutoThrottle;
+  int mFrameLimit;
   std::map<std::string, shared_ptr<PixelPusher> > mPusherMap;
   std::map<std::string, long> mLastSeenMap;
   std::multimap<long, shared_ptr<PixelPusher> > mGroupMap;

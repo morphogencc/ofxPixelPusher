@@ -18,26 +18,26 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
   mSendReset = false;
 
   mDeviceHeader = header;
-  mPacket = header->getPacketRemainder();
+  shared_ptr<unsigned char> packetRemainder = header->getPacketRemainder();
   int packetLength = header->getPacketRemainderLength();
 
   if(packetLength < 28) {
     ofLog(OF_LOG_ERROR, "Packet size is too small! PixelPusher can't be created.");
   }
 
-  memcpy(&mStripsAttached, &mPacket.get()[0], 1);
-  memcpy(&mMaxStripsPerPacket, &mPacket.get()[1], 1);
-  memcpy(&mPixelsPerStrip, &mPacket.get()[2], 2);
-  memcpy(&mUpdatePeriod, &mPacket.get()[4], 4);
-  memcpy(&mPowerTotal, &mPacket.get()[8], 4);
-  memcpy(&mDeltaSequence, &mPacket.get()[12], 4);
-  memcpy(&mControllerId, &mPacket.get()[16], 4);
-  memcpy(&mGroupId, &mPacket.get()[20], 4);
-  memcpy(&mArtnetUniverse, &mPacket.get()[24], 2);
-  memcpy(&mArtnetChannel, &mPacket.get()[26], 2);
+  memcpy(&mStripsAttached, &packetRemainder.get()[0], 1);
+  memcpy(&mMaxStripsPerPacket, &packetRemainder.get()[1], 1);
+  memcpy(&mPixelsPerStrip, &packetRemainder.get()[2], 2);
+  memcpy(&mUpdatePeriod, &packetRemainder.get()[4], 4);
+  memcpy(&mPowerTotal, &packetRemainder.get()[8], 4);
+  memcpy(&mDeltaSequence, &packetRemainder.get()[12], 4);
+  memcpy(&mControllerId, &packetRemainder.get()[16], 4);
+  memcpy(&mGroupId, &packetRemainder.get()[20], 4);
+  memcpy(&mArtnetUniverse, &packetRemainder.get()[24], 2);
+  memcpy(&mArtnetChannel, &packetRemainder.get()[26], 2);
 
   if(packetLength < 28 && header->getSoftwareRevision() > 100) {
-    memcpy(&mPort, &mPacket.get()[28], 2);
+    memcpy(&mPort, &packetRemainder.get()[28], 2);
   }
   else {
     mPort = 9798; 
@@ -47,7 +47,7 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
   mStripFlags.resize(stripFlagSize);
   
   if (packetLength > 30 && header->getSoftwareRevision() > 108) {
-    memcpy(&mStripFlags[0], &mPacket.get()[30], stripFlagSize);
+    memcpy(&mStripFlags[0], &packetRemainder.get()[30], stripFlagSize);
   }
   else {
     for (int i = 0; i < stripFlagSize; i++) {
@@ -58,17 +58,15 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
   if (packetLength > 30 + stripFlagSize && header->getSoftwareRevision() > 108 ) {
     // set Pusher flags
     long pusherFlags;
-    memcpy(&pusherFlags, &mPacket.get()[32+stripFlagSize], 4);
+    memcpy(&pusherFlags, &packetRemainder.get()[32+stripFlagSize], 4);
     setPusherFlags(pusherFlags);
-    memcpy(&mSegments, &mPacket.get()[36+stripFlagSize], 4);
-    memcpy(&mPowerDomain, &mPacket.get()[40+stripFlagSize], 4);
+    memcpy(&mSegments, &packetRemainder.get()[36+stripFlagSize], 4);
+    memcpy(&mPowerDomain, &packetRemainder.get()[40+stripFlagSize], 4);
   }
-
-  configureNetwork();
 }
 
 PixelPusher::~PixelPusher() {
-  
+  this->stopThread();
 }
 
 int PixelPusher::getNumberOfStrips() {
@@ -77,6 +75,16 @@ int PixelPusher::getNumberOfStrips() {
 
 std::deque<shared_ptr<Strip> > PixelPusher::getStrips() {
   return mStrips;
+}
+
+std::deque<shared_ptr<Strip> > PixelPusher::getTouchedStrips() {
+  std::deque<shared_ptr<Strip> > touchedStrips;
+  for(auto& strip : mStrips) {
+    if(strip->isTouched()) {
+      touchedStrips.push_back(strip);
+    }
+  }
+  return touchedStrips;
 }
 
 void PixelPusher::addStrip(shared_ptr<Strip> strip) {
@@ -111,45 +119,79 @@ std::string PixelPusher::getIpAddress() {
   return mDeviceHeader->getIpAddressString();
 }
 
-/*
+
 void PixelPusher::sendPacket() {
-  long packetLength = 0;
-  bool payload = false;
-  std::deque<shared_ptr<Strip> > remainingStrips = getStrips();
+  std::deque<shared_ptr<Strip> > remainingStrips = getTouchedStrips();
   int stripsPerPacket = getMaxStripsPerPacket();
+  int numberOfStrips = getNumberOfStrips();
+  bool payload = false;
+  long packetLength = 0;
+  mThreadDelay = 16;
+
+  if(getUpdatePeriod() > 100000) {
+    mThreadDelay = (16 / (numberOfStrips / stripsPerPacket));
+  }
+  else if(getUpdatePeriod() > 1000) {
+    mThreadDelay = (getUpdatePeriod() / 1000) + 1;
+  }
+  else {
+    mThreadDelay = ((1000.0 / mFrameLimit) / (numberOfStrips / stripsPerPacket));
+  }
+  
+  long totalDelay = mThreadDelay + mThreadExtraDelay + getExtraDelay();
+  
+  if(!mSendReset && remainingStrips.empty()) {
+    this->sleep(totalDelay);
+  }
+  /*
+  else if (mSendReset) {
+    ofLog(OF_LOG_NOTICE, "Resetting PixelPusher %s at %s", getMacAddress().c_str(), getIpAddress().c_str());
+    // update Packet number
+    memcpy(&resetCmdData[0], &mPacketNumber, 4);
+    
+    // send packet
+    mUdpConnection->send(resetCmdBuffer);
+    mPacketNumber++;
+    
+    mSendReset = false;
+        
+    this->sleep(totalDelay);
+  }
+  */
 
   while(!remainingStrips.empty()) {
     payload = false;
+    packetLength = 0;
     memcpy(&mPacket[0], &mPacketNumber, 4);
     packetLength += 4;
-
+    
     for(int i = 0; i < stripsPerPacket; i++) {
       if(remainingStrips.empty()) {
 	break;
       }
-
+      
       shared_ptr<Strip> strip = remainingStrips.front();
-      if(strip->isTouched() ) {
-        strip->serialize();
-	shared_ptr<unsigned char> stripData = strip->serialize();
-	int stripLength = strip->getLength();
-	short stripNumber = strip->getStripNumber();
-	memcpy(&mPacket[packetLength], stripNumber, 2);
-	packetLength += 2;
-	memcpy(&mPacket[packetLength], stripData, stripLength);
-	payload = true;
-      }
+      strip->serialize();
+      unsigned char* stripData = strip->getPixelData();
+      int stripDataLength = strip->getPixelDataLength();
+      short stripNumber = strip->getStripNumber();
+      memcpy(&mPacket[packetLength], &stripNumber, 2);
+      packetLength += 2;
+      memcpy(&mPacket[packetLength], &stripData, stripDataLength);
+      packetLength += stripDataLength;
+      payload = true;
       remainingStrips.pop_front();
     }
+
     if(payload) {
       mPacketNumber++;
       payload = false;
-      //      string packetMsg(packet.begin(), packet.end()); turn packetData, packetLength into a c_string
-      //      udp.Send(packetMsg.c_str(), packetMsg.length());
+      mUdpConnection.Send(reinterpret_cast<char *>(mPacket), packetLength);
+      ofLog(OF_LOG_NOTICE, "Sent data to PixelPusher %s at %s", getMacAddress().c_str(), getIpAddress().c_str());
+      this->sleep(totalDelay);
     }
   }
 }
-*/
 
 void PixelPusher::setPusherFlags(long pusherFlags) {
   mPusherFlags = pusherFlags; 
@@ -280,10 +322,25 @@ bool PixelPusher::isAlive() {
   }
 }
 
-void PixelPusher::configureNetwork() {
-  
+void PixelPusher::createStrips() {
+  for(int i = 0; i < mStripsAttached; i++) {
+    shared_ptr<Strip> newStrip(new Strip(i, mPixelsPerStrip));
+    mStrips.push_back(newStrip);
+  }
+}
+
+void PixelPusher::createCardThread() {
+  if(!this->isThreadRunning()) {
+    createStrips();
+    mUdpConnection.Create();
+    mUdpConnection.Connect(getIpAddress().c_str(), mPort);
+    mUdpConnection.SetNonBlocking(true);
+    ofLog(OF_LOG_NOTICE, "Connected to PixelPusher %s on port %i", getIpAddress().c_str(), mPort);
+    this->startThread();
+  }
 }
 
 void PixelPusher::threadedFunction() {
-  
+  ofLog(OF_LOG_NOTICE, "Sending data to PixelPusher %s on port %i", getIpAddress().c_str(), mPort);
+  sendPacket();
 }

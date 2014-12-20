@@ -80,8 +80,8 @@ void Strip::serialize() {
   mTouched = false;
 }
 
-std::vector<unsigned char>& Strip::getPixelData() {
-  return mPixelData;
+unsigned char* Strip::getPixelData() {
+  return mPixelData.data();
 }
 
 int Strip::getPixelDataLength() {

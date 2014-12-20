@@ -54,7 +54,7 @@ std::string DeviceHeader::getMacAddressString() {
 
 std::string DeviceHeader::getIpAddressString() {
   char strIpAddress[24];
-  sprintf(strIpAddress, "%u.%u.%u.%u\n", mIpAddress[0], mIpAddress[1], mIpAddress[2], mIpAddress[3]);
+  sprintf(strIpAddress, "%u.%u.%u.%u", mIpAddress[0], mIpAddress[1], mIpAddress[2], mIpAddress[3]);
   return strIpAddress;
 }
 

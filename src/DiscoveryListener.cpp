@@ -22,6 +22,10 @@ void DiscoveryListener::freeInstance() {
   mDiscoveryThread = NULL;
 }
 
+int DiscoveryListener::getFrameLimit() {
+  return mFrameLimit;
+}
+
 DiscoveryListener::DiscoveryListener() : ofThread() {
   mUdpConnection.Create();
   mUdpConnection.SetEnableBroadcast(true);
@@ -35,6 +39,7 @@ DiscoveryListener::DiscoveryListener() : ofThread() {
   std::fill(mUdpMessage.begin(), mUdpMessage.end(), 0);
   
   mAutoThrottle = true;
+  mFrameLimit = 60;
   this->startThread();
 }
 

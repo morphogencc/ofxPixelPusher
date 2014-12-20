@@ -26,7 +26,7 @@ class Strip {
   int getNumPixels();
   void setPowerScale(double powerscale);
   void serialize();
-  std::vector<unsigned char>& getPixelData();
+  unsigned char* getPixelData();
   int getPixelDataLength();
  protected:
   std::vector<shared_ptr<Pixel> > mPixels;

@@ -2,6 +2,15 @@
 
 c++ implementation of pixelpusher software using openframeworks
 
+## Requirements
+This addon reqires `ofxNetwork`, which is a standard part of openFrameworks.  It intentionally uses as little of
+openFrameworks as possible, so hopefully if you need this for another framework, it won't be too difficult to port.
+
+openFrameworks is used for:
+- threading (`ofThread`)
+- network management (`ofxUdpManager`)
+- logging (`ofLog`)
+
 ## Usage
 In your application, create a `DiscoveryListener` instance using `DiscoveryListener::getInstance()`.  This creates a
 separate thread that looks for PixelPusher announcements, and registers the PixelPushers with the Listener.
@@ -38,3 +47,10 @@ its own thread.  As long as you update the strips to reflect current data, every
 
 ## Examples
 
+## More Information
+For more info about PixelPusher visit:
+- [Heroic Robotics](http://www.heroicrobotics.com)
+- [PixelPusher Documentation](https://sites.google.com/a/heroicrobot.com/pixelpusher/home)
+
+To purchase a PixelPusher (and BetterPixel products), go to:
+- [Illumination Supply](http://www.illuminationsupply.com/)

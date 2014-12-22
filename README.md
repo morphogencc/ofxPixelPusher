@@ -3,9 +3,8 @@
 c++ implementation of pixelpusher software using openframeworks
 
 ## Usage
-`DiscoveryListener` is the entry point for this addon.  In your application, create a `DiscoveryListener` instance using
-`DiscoveryListener::getInstance()`.  This creates a separate thread that looks for PixelPusher announcements, and
-registers the PixelPushers with the Listener.
+In your application, create a `DiscoveryListener` instance using `DiscoveryListener::getInstance()`.  This creates a
+separate thread that looks for PixelPusher announcements, and registers the PixelPushers with the Listener.
 
 Once a PixelPusher is detected, you can grab one with any of the three following methods:
 

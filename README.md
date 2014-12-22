@@ -1,4 +1,4 @@
-pixelpushercpp
+ofxPixelPusher
 ==============
 
-c++ implementation of pixelpusher software
+c++ implementation of pixelpusher software using openframeworks

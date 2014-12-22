@@ -35,6 +35,7 @@ class PixelPusher : public ofThread {
   std::string getMacAddress();
   std::string getIpAddress();
   long getGroupId();
+  long getControllerId();
   long getDeltaSequence();
   void increaseExtraDelay(long delay);
   void decreaseExtraDelay(long delay);

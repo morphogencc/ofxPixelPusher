@@ -1,2 +1,2 @@
 ofxNetwork
-PixelPusherCPP
+ofxPixelPusher

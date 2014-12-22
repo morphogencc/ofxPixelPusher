@@ -26,6 +26,46 @@ int DiscoveryListener::getFrameLimit() {
   return mFrameLimit;
 }
 
+std::vector<shared_ptr<PixelPusher> > DiscoveryListener::getPushers() {
+  this->lock();
+  std::vector<shared_ptr<PixelPusher> > pusherVector;
+  for(std::map<std::string, shared_ptr<PixelPusher> >::iterator it = mPusherMap.begin();
+	it != mPusherMap.end();
+      ++it) {
+    pusherVector.push_back(it->second);
+  }
+  this->unlock();
+  return pusherVector;
+}
+
+std::vector<shared_ptr<PixelPusher> > DiscoveryListener::getGroup(long groupId) {
+  this->lock();
+  std::vector<shared_ptr<PixelPusher> > pusherVector;
+  for(std::map<long, shared_ptr<PixelPusher> >::iterator it = mGroupMap.lower_bound(groupId);
+	it != mGroupMap.upper_bound(groupId);
+      ++it) {
+    pusherVector.push_back(it->second);
+  }
+  this->unlock();
+  return pusherVector;
+}
+
+shared_ptr<PixelPusher> DiscoveryListener::getController(long groupId, long controllerId) {
+  this->lock();
+  for(std::map<long, shared_ptr<PixelPusher> >::iterator it = mGroupMap.lower_bound(groupId);
+	it != mGroupMap.upper_bound(groupId);
+      ++it) {
+    if(it->second->getControllerId() == controllerId) {
+      this->unlock();
+      return it->second;
+    }
+  }
+  //if no matching PixelPusher is found, return a nullPtr
+  shared_ptr<PixelPusher> nullPtr;
+  this->unlock();
+  return nullPtr;
+}
+
 DiscoveryListener::DiscoveryListener() : ofThread() {
   mUdpConnection.Create();
   mUdpConnection.SetEnableBroadcast(true);
@@ -52,12 +92,13 @@ void DiscoveryListener::threadedFunction() {
     this->lock();
     update();
     this->unlock();
+    this->sleep(1000);
   }
+  
 }
 
 void DiscoveryListener::update() {
-  //this should be its own thread
-  mMessageFlag = mUdpConnection.Receive(&mIncomingUdpMessage[0],mIncomingPacketSize); //returns number of bytes received
+  mMessageFlag = mUdpConnection.Receive(&mIncomingUdpMessage[0],mIncomingPacketSize);
   std::copy(mIncomingUdpMessage.begin(), mIncomingUdpMessage.end(), mUdpMessage.begin());
 
   if(mMessageFlag != -1) {
@@ -97,24 +138,17 @@ void DiscoveryListener::update() {
 	}
       }
     }
+
+    //update power limits here
     
-    /*
-    if ( TotalPowerLimit > 0 ) {
-      TotalPower = 0;
-      
-      for(size_t k=0; k < mPushers.size(); k++) {
-        TotalPower += mPushers[k]->getPowerTotal();
-	}
-      PowerScale = ( TotalPower > TotalPowerLimit ) ? ( TotalPowerLimit / TotalPower ) : 1.0;
-    }
-    */
   }
+  //updatePusherMap();
 }
 
 void DiscoveryListener::addNewPusher(std::string macAddress, shared_ptr<PixelPusher> pusher) {
   mPusherMap.insert(std::make_pair(macAddress, pusher));
   mGroupMap.insert(std::make_pair(pusher->getGroupId(), pusher));
-  pusher->createCardThread();
+  //pusher->createCardThread();
 }
 
 void DiscoveryListener::updatePusher(std::string macAddress, shared_ptr<PixelPusher> pusher) {
@@ -122,14 +156,12 @@ void DiscoveryListener::updatePusher(std::string macAddress, shared_ptr<PixelPus
 }
 
 void DiscoveryListener::updatePusherMap() {
-  //THREAD THIS FUNCTION
   for(std::map<std::string, shared_ptr<PixelPusher> >::iterator pusher = mPusherMap.begin();
       pusher != mPusherMap.end();
       ) {
     //pusher->first is Mac Address, pusher->second is the shared pointer to the PixelPusher
     if(!pusher->second->isAlive()) {
       ofLog(OF_LOG_NOTICE, "DiscoveryListener removing PixelPusher %s from all maps.", pusher->first.c_str());
-      //remove pusher from group map
       typedef std::multimap<long, shared_ptr<PixelPusher> >::iterator mapIterator;
       std::pair<mapIterator, mapIterator> iteratorPair = mGroupMap.equal_range(pusher->second->getGroupId());
       mapIterator it = iteratorPair.first;

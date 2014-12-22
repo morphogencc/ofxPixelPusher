@@ -3,6 +3,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){
   listener = DiscoveryListener::getInstance();
+  ofSetLogLevel("ofThread", OF_LOG_VERBOSE);
 }
 
 //--------------------------------------------------------------
@@ -11,6 +12,12 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+  std::vector<shared_ptr<PixelPusher> > pushers = listener->getPushers();
+  ofColor stripColor = ofColor::fromHsb(255*sin(ofGetElapsedTimef()*0.1), 255, 255);
+  ofLog(OF_LOG_NOTICE, "Color: %f %f %f", stripColor.getHue(), stripColor.getSaturation(), stripColor.getBrightness());
+  for(auto pusher : pushers) {
+    pusher->setStripValues(0, stripColor.r, stripColor.g, stripColor.b);
+  }
 }
 
 //--------------------------------------------------------------

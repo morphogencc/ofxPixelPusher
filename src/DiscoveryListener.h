@@ -22,6 +22,9 @@ class DiscoveryListener : public ofThread {
   static DiscoveryListener* getInstance();
   void freeInstance();
   int getFrameLimit();
+  std::vector<shared_ptr<PixelPusher> > getPushers();
+  std::vector<shared_ptr<PixelPusher> > getGroup(long groupId);
+  shared_ptr<PixelPusher> getController(long groupId, long controllerId);
  private:
   DiscoveryListener();
   ~DiscoveryListener();
@@ -42,5 +45,4 @@ class DiscoveryListener : public ofThread {
   std::map<std::string, shared_ptr<PixelPusher> > mPusherMap;
   std::map<std::string, long> mLastSeenMap;
   std::multimap<long, shared_ptr<PixelPusher> > mGroupMap;
-  //SceneThread scene;
 };

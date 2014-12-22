@@ -79,7 +79,7 @@ std::deque<shared_ptr<Strip> > PixelPusher::getStrips() {
 
 std::deque<shared_ptr<Strip> > PixelPusher::getTouchedStrips() {
   std::deque<shared_ptr<Strip> > touchedStrips;
-  for(auto& strip : mStrips) {
+  for(auto strip : mStrips) {
     if(strip->isTouched()) {
       touchedStrips.push_back(strip);
     }
@@ -119,28 +119,33 @@ std::string PixelPusher::getIpAddress() {
   return mDeviceHeader->getIpAddressString();
 }
 
-
 void PixelPusher::sendPacket() {
   std::deque<shared_ptr<Strip> > remainingStrips = getTouchedStrips();
   bool payload = false;
   long packetLength = 0;
-  mThreadDelay = 16;
+  mThreadDelay = 16.0;
 
-  if(getUpdatePeriod() > 100000) {
-    mThreadDelay = (16 / (mStripsAttached / mMaxStripsPerPacket));
+  if(getUpdatePeriod() > 100000.0) {
+    mThreadDelay = (16.0 / (mStripsAttached / mMaxStripsPerPacket));
   }
-  else if(getUpdatePeriod() > 1000) {
-    mThreadDelay = (getUpdatePeriod() / 1000) + 1;
+  else if(getUpdatePeriod() > 1000.0) {
+    mThreadDelay = (getUpdatePeriod() / 1000.0) + 1;
   }
   else {
     mThreadDelay = ((1000.0 / mFrameLimit) / (mStripsAttached / mMaxStripsPerPacket));
   }
   
-  long totalDelay = mThreadDelay + mThreadExtraDelay + getExtraDelay();
+  long totalDelay = mThreadDelay + mThreadExtraDelay + mExtraDelayMsec;
   
+  ofLog(OF_LOG_NOTICE, "Thread Delay: %ld Thread Extra Delay: %ld Extra Delay: %ld", mThreadDelay, mThreadExtraDelay, mExtraDelayMsec);
+  ofLog(OF_LOG_NOTICE, "Total delay for PixelPusher %s is %ld", getMacAddress().c_str(), totalDelay);
+  ofLog(OF_LOG_NOTICE, "Number of strips: %i", getNumberOfStrips());
+  ofLog(OF_LOG_NOTICE, "Number of touched strips: %i", remainingStrips.size());
+
   if(!mSendReset && remainingStrips.empty()) {
-    this->sleep(totalDelay);
+    //this->sleep(totalDelay);
   }
+
   /*
   else if (mSendReset) {
     ofLog(OF_LOG_NOTICE, "Resetting PixelPusher %s at %s", getMacAddress().c_str(), getIpAddress().c_str());
@@ -187,7 +192,7 @@ void PixelPusher::sendPacket() {
       payload = false;
       mUdpConnection.Send(reinterpret_cast<char *>(mPacket), packetLength);
       ofLog(OF_LOG_NOTICE, "Closing pixelpusher %s thread", getMacAddress().c_str());
-      this->sleep(totalDelay);
+      //this->sleep(0.001*totalDelay);
     }
   }
 }
@@ -198,6 +203,10 @@ void PixelPusher::setPusherFlags(long pusherFlags) {
 
 long PixelPusher::getGroupId() {
   return mGroupId;
+}
+
+long PixelPusher::getControllerId() {
+  return mControllerId;
 }
 
 long PixelPusher::getDeltaSequence() {
@@ -329,14 +338,14 @@ void PixelPusher::createStrips() {
 }
 
 void PixelPusher::createCardThread() {
-  if(!this->isThreadRunning()) {
-    createStrips();
-    mUdpConnection.Create();
-    mUdpConnection.Connect(getIpAddress().c_str(), mPort);
-    mUdpConnection.SetNonBlocking(true);
-    ofLog(OF_LOG_NOTICE, "Connected to PixelPusher %s on port %i", getIpAddress().c_str(), mPort);
-    this->startThread();
-  }
+  createStrips();
+  mUdpConnection.Create();
+  mUdpConnection.Connect(getIpAddress().c_str(), mPort);
+  mUdpConnection.SetNonBlocking(true);
+  ofLog(OF_LOG_NOTICE, "Connected to PixelPusher %s on port %i", getIpAddress().c_str(), mPort);
+  mPacketNumber = 0;
+  mThreadExtraDelay = 0;
+  this->startThread();
 }
 
 void PixelPusher::threadedFunction() {

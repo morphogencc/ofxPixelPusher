@@ -167,16 +167,16 @@ obj/osx/Release/src/testApp.o: src/testApp.cpp src/testApp.h \
   ../../../libs/openFrameworks/video/ofAVFMovieRenderer.h \
   ../../../libs/openFrameworks/3d/ofCamera.h \
   ../../../libs/openFrameworks/3d/ofEasyCam.h \
-  ../../../addons/PixelPusherCPP/src/DiscoveryListener.h \
+  ../../../addons/ofxPixelPusher/src/DiscoveryListener.h \
   ../../../addons/ofxNetwork/src/ofxNetwork.h \
   ../../../addons/ofxNetwork/src/ofxTCPClient.h \
   ../../../addons/ofxNetwork/src/ofxTCPManager.h \
   ../../../addons/ofxNetwork/src/ofxTCPServer.h \
   ../../../addons/ofxNetwork/src/ofxUDPManager.h \
-  ../../../addons/PixelPusherCPP/src/PixelPusher.h \
-  ../../../addons/PixelPusherCPP/src/Strip.h \
-  ../../../addons/PixelPusherCPP/src/Pixel.h \
-  ../../../addons/PixelPusherCPP/src/DeviceHeader.h
+  ../../../addons/ofxPixelPusher/src/PixelPusher.h \
+  ../../../addons/ofxPixelPusher/src/Strip.h \
+  ../../../addons/ofxPixelPusher/src/Pixel.h \
+  ../../../addons/ofxPixelPusher/src/DeviceHeader.h
 
 src/testApp.h:
 
@@ -516,7 +516,7 @@ src/testApp.h:
 
 ../../../libs/openFrameworks/3d/ofEasyCam.h:
 
-../../../addons/PixelPusherCPP/src/DiscoveryListener.h:
+../../../addons/ofxPixelPusher/src/DiscoveryListener.h:
 
 ../../../addons/ofxNetwork/src/ofxNetwork.h:
 
@@ -528,10 +528,10 @@ src/testApp.h:
 
 ../../../addons/ofxNetwork/src/ofxUDPManager.h:
 
-../../../addons/PixelPusherCPP/src/PixelPusher.h:
+../../../addons/ofxPixelPusher/src/PixelPusher.h:
 
-../../../addons/PixelPusherCPP/src/Strip.h:
+../../../addons/ofxPixelPusher/src/Strip.h:
 
-../../../addons/PixelPusherCPP/src/Pixel.h:
+../../../addons/ofxPixelPusher/src/Pixel.h:
 
-../../../addons/PixelPusherCPP/src/DeviceHeader.h:
+../../../addons/ofxPixelPusher/src/DeviceHeader.h:

@@ -148,7 +148,7 @@ void DiscoveryListener::update() {
 void DiscoveryListener::addNewPusher(std::string macAddress, shared_ptr<PixelPusher> pusher) {
   mPusherMap.insert(std::make_pair(macAddress, pusher));
   mGroupMap.insert(std::make_pair(pusher->getGroupId(), pusher));
-  //pusher->createCardThread();
+  pusher->createCardThread();
 }
 
 void DiscoveryListener::updatePusher(std::string macAddress, shared_ptr<PixelPusher> pusher) {
@@ -162,6 +162,7 @@ void DiscoveryListener::updatePusherMap() {
     //pusher->first is Mac Address, pusher->second is the shared pointer to the PixelPusher
     if(!pusher->second->isAlive()) {
       ofLog(OF_LOG_NOTICE, "DiscoveryListener removing PixelPusher %s from all maps.", pusher->first.c_str());
+      pusher->second->destroyCardThread();
       typedef std::multimap<long, shared_ptr<PixelPusher> >::iterator mapIterator;
       std::pair<mapIterator, mapIterator> iteratorPair = mGroupMap.equal_range(pusher->second->getGroupId());
       mapIterator it = iteratorPair.first;

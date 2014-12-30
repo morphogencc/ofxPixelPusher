@@ -54,6 +54,7 @@ class PixelPusher : public ofThread {
   bool isEqual(shared_ptr<PixelPusher> pusher);
   bool isAlive();
   void createCardThread();
+  void destroyCardThread();
  private:
   void threadedFunction();
   void createStrips();
@@ -64,7 +65,8 @@ class PixelPusher : public ofThread {
   long mPusherFlags;
   DeviceHeader* mDeviceHeader;
   long mPacketNumber;
-  unsigned char* mPacket;
+  //unsigned char* mPacket;
+  std::vector<unsigned char> mPacket;
   short mPort;
   short mStripsAttached;
   short mMaxStripsPerPacket;
@@ -87,6 +89,7 @@ class PixelPusher : public ofThread {
   bool mSendReset;
   long mThreadDelay;
   long mThreadExtraDelay;
+  long mTotalDelay;
   std::vector<unsigned char> mStripFlags;
   std::deque<shared_ptr<Strip> > mStrips;
 };

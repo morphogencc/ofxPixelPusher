@@ -64,7 +64,7 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
     memcpy(&mPowerDomain, &packetRemainder.get()[40+stripFlagSize], 4);
   }
 
-  mPacket.reserve(3*mMaxStripsPerPacket); //too high, can be reduced
+  mPacket.reserve(400*mMaxStripsPerPacket); //too high, can be reduced
 }
 
 PixelPusher::~PixelPusher() {
@@ -161,7 +161,7 @@ void PixelPusher::sendPacket() {
   */
 
   while(!remainingStrips.empty()) {
-    ofLog(OF_LOG_NOTICE, "Sending data to PixelPusher %s at %s : %d", getMacAddress().c_str(), getIpAddress().c_str(), mPort);
+    ofLog(OF_LOG_NOTICE, "Sending data to PixelPusher %s at %s:%d", getMacAddress().c_str(), getIpAddress().c_str(), mPort);
     payload = false;
     packetLength = 0;
     memcpy(&mPacket[0], &mPacketNumber, 4);
@@ -188,8 +188,12 @@ void PixelPusher::sendPacket() {
     }
     
     if(payload) {
-      ofLog(OF_LOG_NOTICE, "Payload confirmed; sending packet!");
+      ofLog(OF_LOG_NOTICE, "Payload confirmed; sending packet of %d bytes", mPacket.size());
+      for(int i = 0; i < packetLength; i++) {
+	ofLog(OF_LOG_NOTICE, "%02X", mPacket[i]);
+      }
       mPacketNumber++;
+      mPacket.resize(packetLength);
       mUdpConnection.Send(reinterpret_cast<char *>(mPacket.data()), packetLength);
       payload = false;
     }

@@ -4,11 +4,18 @@
  * nathan lachenmyer
  * 
  * A class that listens for the Universal Disocvery Protocol and reports the results.
+ *
  */
 
 #pragma once
-#include <iostream>
+
+#ifdef _WIN32
+#include <memory>
+#elif __APPLE__
 #include <tr1/memory>
+#endif
+
+#include <iostream>
 #include <map>
 #include <utility>
 #include "ofMain.h"

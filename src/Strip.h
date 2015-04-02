@@ -1,8 +1,13 @@
 #pragma once
 
+#ifdef _WIN32
+#include <memory>
+#elif __APPLE__
+#include <tr1/memory>
+#endif
+
 #include <vector>
 #include <string>
-#include <tr1/memory>
 #include "Pixel.h"
 
 using namespace std::tr1;

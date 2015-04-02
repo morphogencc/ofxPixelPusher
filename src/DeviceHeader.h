@@ -1,7 +1,12 @@
 #pragma once
 
-#include <string>
+#ifdef _WIN32
+#include <memory>
+#elif __APPLE__
 #include <tr1/memory>
+#endif
+
+#include <string>
 #include <stdio.h>
 #include <iostream>
 #include "ofMain.h"

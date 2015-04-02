@@ -4,7 +4,12 @@
  * nathan lachenmyer
  */
 
+#ifdef _WIN32
+#include <memory>
+#elif __APPLE__
 #include <tr1/memory>
+#endif
+
 #include "DiscoveryListener.h"
 #include "DeviceHeader.h"
 
@@ -93,15 +98,16 @@ void DiscoveryListener::threadedFunction() {
     update();
     this->unlock();
     this->sleep(1000);
-  }
-  
+  } 
 }
 
 void DiscoveryListener::update() {
+  ofLog(OF_LOG_NOTICE, "Updating registry...");
   mMessageFlag = mUdpConnection.Receive(&mIncomingUdpMessage[0],mIncomingPacketSize);
-  std::copy(mIncomingUdpMessage.begin(), mIncomingUdpMessage.end(), mUdpMessage.begin());
 
   if(mMessageFlag != -1) {
+	ofLog(OF_LOG_NOTICE, "Received packet, processing...");
+	std::copy(mIncomingUdpMessage.begin(), mIncomingUdpMessage.end(), mUdpMessage.begin());
     DeviceHeader* header;
     header = new DeviceHeader(&mUdpMessage[0], mIncomingPacketSize);
     if(header->getDeviceType() != PIXELPUSHER) {

@@ -7,11 +7,16 @@
 
 #pragma once
 
+#ifdef _WIN32
+#include <memory>
+#elif __APPLE__
+#include <tr1/memory>
+#endif
+
 #include <vector>
 #include <deque>
 #include <list>
 #include <string>
-#include <tr1/memory>
 #include "ofMain.h"
 #include "ofxNetwork.h"
 #include "Strip.h"

@@ -106,8 +106,9 @@ void DiscoveryListener::update() {
   mMessageFlag = mUdpConnection.Receive(&mIncomingUdpMessage[0],mIncomingPacketSize);
 
   if(mMessageFlag != -1) {
-	ofLog(OF_LOG_NOTICE, "Received packet, processing...");
-	std::copy(mIncomingUdpMessage.begin(), mIncomingUdpMessage.end(), mUdpMessage.begin());
+    mUdpMessage.clear();
+    ofLog(OF_LOG_NOTICE, "Received packet, processing...");
+    std::copy(mIncomingUdpMessage.begin(), mIncomingUdpMessage.end(), mUdpMessage.begin());
     DeviceHeader* header;
     header = new DeviceHeader(&mUdpMessage[0], mIncomingPacketSize);
     if(header->getDeviceType() != PIXELPUSHER) {

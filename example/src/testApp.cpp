@@ -16,12 +16,11 @@ void testApp::draw(){
   std::vector<shared_ptr<PixelPusher> > pushers = listener->getPushers();
   ofLog(OF_LOG_NOTICE, "----------Current Device Registry----------");
   for(auto pusher : pushers) {
-    std::cout << "Pusher MAC Address: " << pusher->getMacAddress() << " IP Address: " << pusher->getIpAddress() << " Strips attached: " << pusher->getNumberOfStrips() << std::endl;
+    std::cout << "Pusher MAC Address: " << pusher->getMacAddress() << " IP Address: " << pusher->getIpAddress() << " Strips attached: " << pusher->getNumberOfStrips() << " Number of Pixels: " << pusher->getPixelsPerStrip(0) << std::endl;
   }
   for(auto pusher : pushers) {
     auto strips = pusher->getStrips();
     for(auto strip : strips) {
-      std::cout << "Writing value " << ofGetElapsedTimef() << " to strip number " << strip->getStripNumber() << std::endl;
       strip->setPixels(fmodf(ofGetElapsedTimef(), 255), 255, 0);
     }
   }

@@ -87,3 +87,11 @@ unsigned char* Strip::getPixelData() {
 int Strip::getPixelDataLength() {
   return mPixels.size();
 }
+
+std::vector<unsigned char>::iterator Strip::begin() {
+  return mPixelData.begin();
+}
+
+std::vector<unsigned char>::iterator Strip::end() {
+  return mPixelData.end();
+}

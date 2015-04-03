@@ -163,12 +163,17 @@ void PixelPusher::sendPacket() {
   while(!remainingStrips.empty()) {
     ofLog(OF_LOG_NOTICE, "Sending data to PixelPusher %s at %s:%d", getMacAddress().c_str(), getIpAddress().c_str(), mPort);
     payload = false;
-    packetLength = 0;
-    memcpy(&mPacket[0], &mPacketNumber, 4);
-    packetLength += 4;
+    //packetLength = 0;
+    //memcpy(&mPacket[0], &mPacketNumber, 4);
+    //packetLength += 4;
+    mPacket.clear();
+    mPacket.push_back((mPacketNumber >> 24) & 0xFF);
+    mPacket.push_back((mPacketNumber >> 16) & 0xFF);
+    mPacket.push_back((mPacketNumber >> 8) & 0xFF);
+    mPacket.push_back(mPacketNumber & 0xFF);
     
     for(int i = 0; i < mMaxStripsPerPacket; i++) {
-      ofLog(OF_LOG_NOTICE, "Packing strip %d of %hd...", i, mMaxStripsPerPacket);
+      ofLog(OF_LOG_NOTICE, "Packing strip %d of %hu...", i, mMaxStripsPerPacket);
 
       if(remainingStrips.empty()) {
 	break;
@@ -179,22 +184,27 @@ void PixelPusher::sendPacket() {
       unsigned char* stripData = strip->getPixelData();
       int stripDataLength = strip->getPixelDataLength();
       short stripNumber = strip->getStripNumber();
-      memcpy(&mPacket[packetLength], &stripNumber, 2);
-      packetLength += 2;
-      memcpy(&mPacket[packetLength], &stripData, stripDataLength);
-      packetLength += stripDataLength;
+      //memcpy(&mPacket[packetLength], &stripNumber, 2);
+      //packetLength += 2;
+      mPacket.push_back((stripNumber >> 8) & 0xFF);
+      mPacket.push_back(stripNumber & 0xFF);
+	
+      //memcpy(&mPacket[packetLength], &stripData, stripDataLength);
+      //packetLength += stripDataLength;
+      
+      /**************************************************************
+               This seems to be where all of my problems are :(
+       *************************************************************/
+      std::copy(strip->begin(), strip->end(), back_inserter(mPacket));
+      //copy doesn't seem to add stuff to mPacket...
       payload = true;
       remainingStrips.pop_front();
     }
     
     if(payload) {
       ofLog(OF_LOG_NOTICE, "Payload confirmed; sending packet of %d bytes", mPacket.size());
-      for(int i = 0; i < packetLength; i++) {
-	ofLog(OF_LOG_NOTICE, "%02X", mPacket[i]);
-      }
       mPacketNumber++;
-      mPacket.resize(packetLength);
-      mUdpConnection.Send(reinterpret_cast<char *>(mPacket.data()), packetLength);
+      mUdpConnection.Send(reinterpret_cast<char *>(mPacket.data()), mPacket.size());
       payload = false;
     }
   }

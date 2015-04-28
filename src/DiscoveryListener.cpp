@@ -4,27 +4,23 @@
  * nathan lachenmyer
  */
 
-#ifdef _WIN32
-#include <memory>
-#elif __APPLE__
-#include <tr1/memory>
-#endif
 
+#include <memory>
 #include "DiscoveryListener.h"
 #include "DeviceHeader.h"
 
 DiscoveryListener* DiscoveryListener::mDiscoveryThread = NULL;
 
 DiscoveryListener* DiscoveryListener::getInstance() {
-  if(mDiscoveryThread == NULL) {
-    mDiscoveryThread = new DiscoveryListener();
+  if(mDiscoveryService == NULL) {
+    mDiscoveryService = new DiscoveryListener();
   }
-  return mDiscoveryThread;
+  return mDiscoveryService;
 }
 
 void DiscoveryListener::freeInstance() {
-  delete mDiscoveryThread;
-  mDiscoveryThread = NULL;
+  delete mDiscoveryService;
+  mDiscoveryService = NULL;
 }
 
 int DiscoveryListener::getFrameLimit() {
@@ -71,7 +67,7 @@ shared_ptr<PixelPusher> DiscoveryListener::getController(long groupId, long cont
   return nullPtr;
 }
 
-DiscoveryListener::DiscoveryListener() : ofThread() {
+DiscoveryListener::DiscoveryListener() {
   mUdpConnection.Create();
   mUdpConnection.SetEnableBroadcast(true);
   mUdpConnection.Bind(mPort);
@@ -85,20 +81,14 @@ DiscoveryListener::DiscoveryListener() : ofThread() {
   
   mAutoThrottle = true;
   mFrameLimit = 60;
-  this->startThread();
+
+  mUpdateMapThread = std::thread(&DiscoveryListener::updatePusherMap, this);
 }
 
 DiscoveryListener::~DiscoveryListener() {
-  this->stopThread();
-}
-
-void DiscoveryListener::threadedFunction() {
-  while(this->isThreadRunning()) {
-    this->lock();
-    update();
-    this->unlock();
-    this->sleep(1000);
-  } 
+  if(mUpdateMapThread.joinable()) {
+    mUpdateMapThread.join();
+  }
 }
 
 void DiscoveryListener::update() {
@@ -106,6 +96,7 @@ void DiscoveryListener::update() {
   mMessageFlag = mUdpConnection.Receive(&mIncomingUdpMessage[0],mIncomingPacketSize);
 
   if(mMessageFlag != -1) {
+    mUpdateMutex.lock();
     mUdpMessage.clear();
     ofLog(OF_LOG_NOTICE, "Received packet, processing...");
     std::copy(mIncomingUdpMessage.begin(), mIncomingUdpMessage.end(), mUdpMessage.begin());
@@ -145,11 +136,9 @@ void DiscoveryListener::update() {
 	}
       }
     }
-
-    //update power limits here
     
+    mUpdateMutex.unlock();
   }
-  //updatePusherMap();
 }
 
 void DiscoveryListener::addNewPusher(std::string macAddress, shared_ptr<PixelPusher> pusher) {
@@ -163,16 +152,25 @@ void DiscoveryListener::updatePusher(std::string macAddress, shared_ptr<PixelPus
 }
 
 void DiscoveryListener::updatePusherMap() {
-  for(std::map<std::string, shared_ptr<PixelPusher> >::iterator pusher = mPusherMap.begin();
-      pusher != mPusherMap.end();
-      ) {
-    //pusher->first is Mac Address, pusher->second is the shared pointer to the PixelPusher
-    if(!pusher->second->isAlive()) {
-      ofLog(OF_LOG_NOTICE, "DiscoveryListener removing PixelPusher %s from all maps.", pusher->first.c_str());
-      pusher->second->destroyCardThread();
-      typedef std::multimap<long, shared_ptr<PixelPusher> >::iterator mapIterator;
-      std::pair<mapIterator, mapIterator> iteratorPair = mGroupMap.equal_range(pusher->second->getGroupId());
-      mapIterator it = iteratorPair.first;
+  mRunUpdateMapThread = true;
+  while(mRunUpdateMapThread) {
+    mUpdateMutex.lock();
+    for(std::map<std::string, shared_ptr<PixelPusher> >::iterator pusher = mPusherMap.begin();
+	pusher != mPusherMap.end();
+	) {
+      //pusher->first is Mac Address, pusher->second is the shared pointer to the PixelPusher
+      if(!pusher->second->isAlive()) {
+	ofLog(OF_LOG_NOTICE, "DiscoveryListener removing PixelPusher %s from all maps.", pusher->first.c_str());
+	pusher->second->destroyCardThread();
+	typedef std::multimap<long, shared_ptr<PixelPusher> >::iterator mapIterator;
+	std::pair<mapIterator, mapIterator> iteratorPair = mGroupMap.equal_range(pusher->second->getGroupId());
+      mapIterator it MyClass& MyClass::operator=(const MyClass &rhs) {
+	// Check for self-assignment!
+	if (this == &rhs)
+	  return *this;
+	
+	return *this;
+      } iteratorPair.first;
       for(; it != iteratorPair.second; ++it) {
 	if(it->second == pusher->second) {
 	  mGroupMap.erase(it);
@@ -182,9 +180,12 @@ void DiscoveryListener::updatePusherMap() {
       //remove pusher from maps
       mLastSeenMap.erase(pusher->first);
       mPusherMap.erase(pusher++);
+      }
+      else {
+	++pusher;
+      }
     }
-    else {
-      ++pusher;
-    }
-  }
+    mUpdateMutex.unlock();
+    this_thread::sleep_for(std::chrono::milliseconds(1000));
+  }  
 }

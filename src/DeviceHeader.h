@@ -1,17 +1,10 @@
 #pragma once
 
-#ifdef _WIN32
 #include <memory>
-#elif __APPLE__
-#include <tr1/memory>
-#endif
-
 #include <string>
 #include <stdio.h>
 #include <iostream>
 #include "ofMain.h"
-
-using namespace std::tr1;
 
 enum DeviceType {
   ETHERDREAM, 

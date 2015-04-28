@@ -7,24 +7,20 @@
 
 #pragma once
 
-#ifdef _WIN32
 #include <memory>
-#elif __APPLE__
-#include <tr1/memory>
-#endif
-
 #include <vector>
 #include <deque>
 #include <list>
 #include <string>
+#include <thread>
+#include <mutex>
+#include <chrono>
 #include "ofMain.h"
 #include "ofxNetwork.h"
 #include "Strip.h"
 #include "DeviceHeader.h"
 
-using namespace std::tr1;
-
-class PixelPusher : public ofThread {
+class PixelPusher {
  public:
   PixelPusher(DeviceHeader* header);
   ~PixelPusher();
@@ -61,7 +57,6 @@ class PixelPusher : public ofThread {
   void createCardThread();
   void destroyCardThread();
  private:
-  void threadedFunction();
   void createStrips();
   void sendPacket();
   static const int mTimeoutTime = 5;
@@ -95,6 +90,8 @@ class PixelPusher : public ofThread {
   long mThreadDelay;
   long mThreadExtraDelay;
   long mTotalDelay;
+  bool mRunThread;
+  std::thread mCardThread;
   std::vector<unsigned char> mStripFlags;
   std::deque<shared_ptr<Strip> > mStrips;
 };

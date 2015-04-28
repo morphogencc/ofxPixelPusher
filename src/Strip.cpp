@@ -2,7 +2,7 @@
 
 Strip::Strip(short stripNumber, int length) {
   for(int i = 0; i < length; i++) {
-    mPixels.push_back(shared_ptr<Pixel>(new Pixel()));
+      mPixels.push_back(std::shared_ptr<Pixel>(new Pixel()));
   }
   mStripNumber = stripNumber;
   mTouched = false;
@@ -44,7 +44,7 @@ void Strip::setPixels(unsigned char r, unsigned char g, unsigned char b) {
   mTouched = true;
 }
 
-void Strip::setPixels(std::vector<shared_ptr<Pixel> > pixels) {
+void Strip::setPixels(std::vector<std::shared_ptr<Pixel> > pixels) {
   mPixels = pixels;
   mTouched = true;
 }
@@ -54,12 +54,12 @@ void Strip::setPixel(int position, unsigned char r, unsigned char g, unsigned ch
   mTouched = true;
 }
 
-void Strip::setPixel(int position, shared_ptr<Pixel> pixel) {
+void Strip::setPixel(int position, std::shared_ptr<Pixel> pixel) {
   mPixels[position] = pixel;
   mTouched = true;
 }
 
-std::vector<shared_ptr<Pixel> > Strip::getPixels() {
+std::vector<std::shared_ptr<Pixel> > Strip::getPixels() {
   return mPixels;
 }
 

@@ -126,6 +126,10 @@ void PixelPusher::sendPacket() {
   long packetLength = 0;
   mThreadDelay = 16.0;
   mPacket.clear();
+  mRunCardThread = true;
+
+  while(mRunCardThread) {
+  
 
   if(getUpdatePeriod() > 100000.0) {
     mThreadDelay = (16.0 / (mStripsAttached / mMaxStripsPerPacket));
@@ -176,7 +180,8 @@ void PixelPusher::sendPacket() {
       ofLog(OF_LOG_NOTICE, "Packing strip %d of %hu...", i, mMaxStripsPerPacket);
 
       if(remainingStrips.empty()) {
-	break;
+	this_thread::sleep_for(std::chrono::milliseconds(mTotalDelasy));
+	continue;
       }
       
       shared_ptr<Strip> strip = remainingStrips.front();
@@ -206,7 +211,9 @@ void PixelPusher::sendPacket() {
       mPacketNumber++;
       mUdpConnection.Send(reinterpret_cast<char *>(mPacket.data()), mPacket.size());
       payload = false;
+      this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
     }
+  }
   }
 
   ofLog(OF_LOG_NOTICE, "Closing Card Thread for PixelPusher %s", getMacAddress().c_str());
@@ -360,18 +367,11 @@ void PixelPusher::createCardThread() {
   ofLog(OF_LOG_NOTICE, "Connected to PixelPusher %s on port %d", getIpAddress().c_str(), mPort);
   mPacketNumber = 0;
   mThreadExtraDelay = 0;
-  this->startThread();
+  mCardThread = std::thread(&PixelPusher::sendPacket, this);
 }
 
 void PixelPusher::destroyCardThread() {
-  this->stopThread();
-}
-
-void PixelPusher::threadedFunction() {
-  while(this->isThreadRunning()) {
-    this->lock();
-    sendPacket();
-    this->unlock();
-    this->sleep(mTotalDelay);
+  if(mCardThread.joinable()) {
+    mCardThread.join();
   }
 }

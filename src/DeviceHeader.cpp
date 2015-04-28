@@ -1,8 +1,9 @@
+#include "stdafx.h"
 #include "DeviceHeader.h"
 
 DeviceHeader::DeviceHeader(unsigned char* packet, int packetLength) {
   if(packetLength < sHeaderLength) {
-    ofLog(OF_LOG_ERROR, "Incorrect package length in DeviceHeader constructor!");
+    sdfLog::logFormat("Incorrect package length in DeviceHeader constructor!");
   }
 
   memcpy(&mMacAddress[0], &packet[0], 6);
@@ -16,14 +17,14 @@ DeviceHeader::DeviceHeader(unsigned char* packet, int packetLength) {
   memcpy(&mLinkSpeed, &packet[20], 4);
 
   if(mSoftwareRevision < mOldestAcceptableSoftwareRevision) {
-    ofLog(OF_LOG_WARNING, "This PixelPusher Library requires firmware revision %f", mOldestAcceptableSoftwareRevision / 100.0);
-    ofLog(OF_LOG_WARNING, "This PixelPusher is using %f", mSoftwareRevision / 100.0);
-    ofLog(OF_LOG_WARNING, "This is not expected to work.  Please update your PixelPusher.");
+    sdfLog::logFormat("This PixelPusher Library requires firmware revision %f", mOldestAcceptableSoftwareRevision / 100.0);
+    sdfLog::logFormat("This PixelPusher is using %f", mSoftwareRevision / 100.0);
+    sdfLog::logFormat("This is not expected to work.  Please update your PixelPusher.");
   }
         
   mPacketRemainderLength = packetLength - sHeaderLength;
   //replace this with std::vector and std::vector::assign()
-  mPacketRemainder = shared_ptr<unsigned char>(new unsigned char[mPacketRemainderLength]);
+  mPacketRemainder = std::shared_ptr<unsigned char>(new unsigned char[mPacketRemainderLength]);
   memcpy(&mPacketRemainder.get()[0], &packet[sHeaderLength], mPacketRemainderLength);
 
   /*
@@ -86,7 +87,7 @@ long DeviceHeader::getLinkSpeed() {
   return mLinkSpeed;
 }
 
-shared_ptr<unsigned char> DeviceHeader::getPacketRemainder() {
+std::shared_ptr<unsigned char> DeviceHeader::getPacketRemainder() {
   return mPacketRemainder;
 }
 

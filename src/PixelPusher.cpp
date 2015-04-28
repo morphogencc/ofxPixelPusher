@@ -1,5 +1,7 @@
+#include "stdafx.h"
 #include "PixelPusher.h"
 #include <algorithm>
+#include <ctime>
 
 PixelPusher::PixelPusher(DeviceHeader* header) {
   mArtnetUniverse = 0;
@@ -13,16 +15,16 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
   mAutothrottle = false;
   mSegments = 0;
   mPowerDomain = 0;
-  mLastPingAt = ofGetElapsedTimef();
-  mResetSentAt = ofGetElapsedTimef();
+  mLastPingAt = std::clock() / CLOCKS_PER_SEC;
+  mResetSentAt = std::clock() / CLOCKS_PER_SEC;
   mSendReset = false;
 
   mDeviceHeader = header;
-  shared_ptr<unsigned char> packetRemainder = header->getPacketRemainder();
+  std::shared_ptr<unsigned char> packetRemainder = header->getPacketRemainder();
   int packetLength = header->getPacketRemainderLength();
 
   if(packetLength < 28) {
-    ofLog(OF_LOG_ERROR, "Packet size is too small! PixelPusher can't be created.");
+    sdfLog::logFormat("Packet size is too small! PixelPusher can't be created.");
   }
 
   memcpy(&mStripsAttached, &packetRemainder.get()[0], 1);
@@ -74,12 +76,12 @@ int PixelPusher::getNumberOfStrips() {
   return mStrips.size();
 }
 
-std::deque<shared_ptr<Strip> > PixelPusher::getStrips() {
+std::deque<std::shared_ptr<Strip> > PixelPusher::getStrips() {
   return mStrips;
 }
 
-std::deque<shared_ptr<Strip> > PixelPusher::getTouchedStrips() {
-  std::deque<shared_ptr<Strip> > touchedStrips;
+std::deque<std::shared_ptr<Strip> > PixelPusher::getTouchedStrips() {
+  std::deque<std::shared_ptr<Strip> > touchedStrips;
   for(auto strip : mStrips) {
     if(strip->isTouched()) {
       touchedStrips.push_back(strip);
@@ -88,11 +90,11 @@ std::deque<shared_ptr<Strip> > PixelPusher::getTouchedStrips() {
   return touchedStrips;
 }
 
-void PixelPusher::addStrip(shared_ptr<Strip> strip) {
+void PixelPusher::addStrip(std::shared_ptr<Strip> strip) {
   mStrips.push_back(strip);
 }
 
-shared_ptr<Strip> PixelPusher::getStrip(int stripNumber) {
+std::shared_ptr<Strip> PixelPusher::getStrip(int stripNumber) {
   return mStrips.at(stripNumber);
 }
 
@@ -108,7 +110,7 @@ void PixelPusher::setStripValues(int stripNumber, unsigned char red, unsigned ch
   mStrips.at(stripNumber)->setPixels(red, green, blue);
 }
 
-void PixelPusher::setStripValues(int stripNumber, std::vector<shared_ptr<Pixel> > pixels) {
+void PixelPusher::setStripValues(int stripNumber, std::vector<std::shared_ptr<Pixel> > pixels) {
   mStrips.at(stripNumber)->setPixels(pixels);
 }
 
@@ -121,7 +123,7 @@ std::string PixelPusher::getIpAddress() {
 }
 
 void PixelPusher::sendPacket() {
-  std::deque<shared_ptr<Strip> > remainingStrips = getTouchedStrips();
+  std::deque<std::shared_ptr<Strip> > remainingStrips = getTouchedStrips();
   bool payload = false;
   long packetLength = 0;
   mThreadDelay = 16.0;
@@ -129,8 +131,6 @@ void PixelPusher::sendPacket() {
   mRunCardThread = true;
 
   while(mRunCardThread) {
-  
-
   if(getUpdatePeriod() > 100000.0) {
     mThreadDelay = (16.0 / (mStripsAttached / mMaxStripsPerPacket));
   }
@@ -143,15 +143,15 @@ void PixelPusher::sendPacket() {
   
   mTotalDelay = mThreadDelay + mThreadExtraDelay + mExtraDelayMsec;
   
-  ofLog(OF_LOG_NOTICE, "Total delay for PixelPusher %s is %ld", getMacAddress().c_str(), mTotalDelay);
+  sdfLog::logFormat("Total delay for PixelPusher %s is %ld", getMacAddress().c_str(), mTotalDelay);
 
   if(!mSendReset && remainingStrips.empty()) {
-    this->sleep(mTotalDelay);
+		this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
   }
 
   /*
     else if (mSendReset) {
-    ofLog(OF_LOG_NOTICE, "Resetting PixelPusher %s at %s", getMacAddress().c_str(), getIpAddress().c_str());
+    sdfLog::logFormat("Resetting PixelPusher %s at %s", getMacAddress().c_str(), getIpAddress().c_str());
     // update Packet number
     memcpy(&resetCmdData[0], &mPacketNumber, 4);
     
@@ -165,7 +165,7 @@ void PixelPusher::sendPacket() {
   */
 
   while(!remainingStrips.empty()) {
-    ofLog(OF_LOG_NOTICE, "Sending data to PixelPusher %s at %s:%d", getMacAddress().c_str(), getIpAddress().c_str(), mPort);
+    sdfLog::logFormat("Sending data to PixelPusher %s at %s:%d", getMacAddress().c_str(), getIpAddress().c_str(), mPort);
     payload = false;
     //packetLength = 0;
     //memcpy(&mPacket[0], &mPacketNumber, 4);
@@ -177,14 +177,14 @@ void PixelPusher::sendPacket() {
     mPacket.push_back(mPacketNumber & 0xFF);
     
     for(int i = 0; i < mMaxStripsPerPacket; i++) {
-      ofLog(OF_LOG_NOTICE, "Packing strip %d of %hu...", i, mMaxStripsPerPacket);
+      sdfLog::logFormat("Packing strip %d of %hu...", i, mMaxStripsPerPacket);
 
       if(remainingStrips.empty()) {
-	this_thread::sleep_for(std::chrono::milliseconds(mTotalDelasy));
-	continue;
+				this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
+				continue;
       }
       
-      shared_ptr<Strip> strip = remainingStrips.front();
+      std::shared_ptr<Strip> strip = remainingStrips.front();
       strip->serialize();
       unsigned char* stripData = strip->getPixelData();
       int stripDataLength = strip->getPixelDataLength();
@@ -207,16 +207,17 @@ void PixelPusher::sendPacket() {
     }
     
     if(payload) {
-      ofLog(OF_LOG_NOTICE, "Payload confirmed; sending packet of %d bytes", mPacket.size());
+      sdfLog::logFormat("Payload confirmed; sending packet of %d bytes", mPacket.size());
       mPacketNumber++;
-      mUdpConnection.Send(reinterpret_cast<char *>(mPacket.data()), mPacket.size());
+			mUdpConnection->SendTo(reinterpret_cast<char *>(mPacket.data()), mPacket.size(), mPort, getIpAddress().c_str());
+      //mUdpConnection.Send(reinterpret_cast<char *>(mPacket.data()), mPacket.size());
       payload = false;
       this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
     }
   }
   }
 
-  ofLog(OF_LOG_NOTICE, "Closing Card Thread for PixelPusher %s", getMacAddress().c_str());
+  sdfLog::logFormat("Closing Card Thread for PixelPusher %s", getMacAddress().c_str());
 }
 
 void PixelPusher::setPusherFlags(long pusherFlags) {
@@ -284,7 +285,7 @@ long PixelPusher::getPusherFlags() {
   return mPusherFlags;
 }
 
-void PixelPusher::copyHeader(shared_ptr<PixelPusher> pusher) {
+void PixelPusher::copyHeader(std::shared_ptr<PixelPusher> pusher) {
   mControllerId = pusher->mControllerId;
   mDeltaSequence = pusher->mDeltaSequence;
   mGroupId = pusher->mGroupId;
@@ -298,14 +299,14 @@ void PixelPusher::copyHeader(shared_ptr<PixelPusher> pusher) {
   mPowerDomain = pusher->mPowerDomain;
 }
 
-void PixelPusher::updateVariables(shared_ptr<PixelPusher> pusher) {
+void PixelPusher::updateVariables(std::shared_ptr<PixelPusher> pusher) {
   mDeltaSequence = pusher->mDeltaSequence;
   mMaxStripsPerPacket = pusher->mMaxStripsPerPacket;
   mPowerTotal = pusher->mPowerTotal;
   mUpdatePeriod = pusher->mUpdatePeriod;
 }
 
-bool PixelPusher::isEqual(shared_ptr<PixelPusher> pusher) {
+bool PixelPusher::isEqual(std::shared_ptr<PixelPusher> pusher) {
   long updatePeriodDifference = getUpdatePeriod() - pusher->getUpdatePeriod();
   if(abs(updatePeriodDifference) > 500) {
     return false;
@@ -344,7 +345,7 @@ bool PixelPusher::isEqual(shared_ptr<PixelPusher> pusher) {
 }
 
 bool PixelPusher::isAlive() {
-  if((ofGetElapsedTimef() - mLastPingAt) < mTimeoutTime) {
+  if((std::clock() / CLOCKS_PER_SEC - mLastPingAt) < mTimeoutTime) {
     return true;
   }
   else {
@@ -354,17 +355,20 @@ bool PixelPusher::isAlive() {
 
 void PixelPusher::createStrips() {
   for(int i = 0; i < mStripsAttached; i++) {
-    shared_ptr<Strip> newStrip(new Strip(i, mPixelsPerStrip));
+    std::shared_ptr<Strip> newStrip(new Strip(i, mPixelsPerStrip));
     mStrips.push_back(newStrip);
   }
 }
 
 void PixelPusher::createCardThread() {
   createStrips();
-  mUdpConnection.Create();
-  mUdpConnection.Connect(getIpAddress().c_str(), mPort);
-  mUdpConnection.SetNonBlocking(true);
-  ofLog(OF_LOG_NOTICE, "Connected to PixelPusher %s on port %d", getIpAddress().c_str(), mPort);
+
+	mUdpConnection = new sdfServerSocket();
+	bool reuse_buff = 1;
+	mUdpConnection->SetSockOpt(SO_REUSEADDR, &reuse_buff, sizeof(BOOL));
+	mUdpConnection->Create(mPort, SOCK_DGRAM);
+
+  sdfLog::logFormat("Connected to PixelPusher %s on port %d", getIpAddress().c_str(), mPort);
   mPacketNumber = 0;
   mThreadExtraDelay = 0;
   mCardThread = std::thread(&PixelPusher::sendPacket, this);

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Strip.h"
 
 Strip::Strip(short stripNumber, int length) {

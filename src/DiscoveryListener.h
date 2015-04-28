@@ -16,8 +16,9 @@
 #include <chrono>
 #include <thread>
 #include <mutex>
-#include "ofMain.h"
-#include "ofxNetwork.h"
+#include <ctime>
+#include "sdfWindows.hpp"
+#include "sdfServerSocket.hpp"
 #include "PixelPusher.h"
 
 class DiscoveryListener {
@@ -25,18 +26,18 @@ class DiscoveryListener {
   static DiscoveryListener* getInstance();
   void freeInstance();
   int getFrameLimit();
-  std::vector<shared_ptr<PixelPusher> > getPushers();
-  std::vector<shared_ptr<PixelPusher> > getGroup(long groupId);
-  shared_ptr<PixelPusher> getController(long groupId, long controllerId);
+  std::vector<std::shared_ptr<PixelPusher> > getPushers();
+  std::vector<std::shared_ptr<PixelPusher> > getGroup(long groupId);
+  std::shared_ptr<PixelPusher> getController(long groupId, long controllerId);
  private:
   DiscoveryListener();
   ~DiscoveryListener();
   void update();
-  void addNewPusher(std::string macAddress, shared_ptr<PixelPusher> pusher);
-  void updatePusher(std::string macAddress, shared_ptr<PixelPusher> pusher);
+  void addNewPusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
+  void updatePusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
   void updatePusherMap();
   static DiscoveryListener* mDiscoveryService;
-  ofxUDPManager mUdpConnection;
+	sdfServerSocket* mUdpConnection;
   int mMessageFlag;
   std::vector<char> mIncomingUdpMessage;
   std::vector<unsigned char> mUdpMessage;
@@ -45,9 +46,9 @@ class DiscoveryListener {
   bool mAutoThrottle;
   bool mRunUpdateMapThread;
   int mFrameLimit;
-  std::map<std::string, shared_ptr<PixelPusher> > mPusherMap;
+  std::map<std::string, std::shared_ptr<PixelPusher> > mPusherMap;
   std::map<std::string, long> mLastSeenMap;
-  std::multimap<long, shared_ptr<PixelPusher> > mGroupMap;
+  std::multimap<long, std::shared_ptr<PixelPusher> > mGroupMap;
   std::thread mUpdateMapThread;
   std::mutex mUpdateMutex;
 };

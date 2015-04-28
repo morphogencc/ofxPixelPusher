@@ -4,7 +4,7 @@
 #include <string>
 #include <stdio.h>
 #include <iostream>
-#include "ofMain.h"
+#include "sdfWindows.hpp"
 
 enum DeviceType {
   ETHERDREAM, 
@@ -25,7 +25,7 @@ class DeviceHeader {
   short getHardwareRevision();
   short getSoftwareRevision();
   long getLinkSpeed();
-  shared_ptr<unsigned char> getPacketRemainder();
+  std::shared_ptr<unsigned char> getPacketRemainder();
   int getPacketRemainderLength();
   bool isMulticast();
  private:
@@ -40,6 +40,6 @@ class DeviceHeader {
   short mHardwareRevision;
   short mSoftwareRevision;
   long mLinkSpeed;
-  shared_ptr<unsigned char> mPacketRemainder;
+  std::shared_ptr<unsigned char> mPacketRemainder;
   int mPacketRemainderLength;
 };

@@ -178,9 +178,6 @@ void PixelPusher::sendPacket() {
 			packetLength = 0;
 			mPacket.clear();
 			
-			//memcpy(&mPacket.front(), &mPacketNumber, 4);
-			//packetLength += 4;
-
 			mPacket.push_back((mPacketNumber >> 24) & 0xFF);
 			mPacket.push_back((mPacketNumber >> 16) & 0xFF);
 			mPacket.push_back((mPacketNumber >> 8) & 0xFF);
@@ -197,13 +194,8 @@ void PixelPusher::sendPacket() {
 				unsigned char* stripData = strip->getPixelData();
 				int stripDataLength = strip->getPixelDataLength();
 				short stripNumber = strip->getStripNumber();
-				//memcpy(&mPacket[packetLength - 1], &stripNumber, 2);
-				//packetLength += 2;
 				mPacket.push_back((stripNumber >> 8) & 0xFF);
 				mPacket.push_back(stripNumber & 0xFF);
-				
-				//memcpy(&mPacket[packetLength - 1], &stripData, stripDataLength);
-				//packetLength += stripDataLength;
 
 				std::copy(strip->begin(), strip->end(), std::back_inserter(mPacket));
 				//copy doesn't seem to add stuff to mPacket...
@@ -216,8 +208,6 @@ void PixelPusher::sendPacket() {
 				mPacketNumber++;
 
 				mUdpConnection->sendTo(getIpAddress(), mPort, mPacket);
-				//mUdpConnection->sendTo(reinterpret_cast<char *>(mPacket.data()), mPacket.size(), mPort, getIpAddress().c_str());
-				//mUdpConnection->sendTo(reinterpret_cast<char *>(mPacket.data()), mPacket.size());
 				payload = false;
 				this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
 			}

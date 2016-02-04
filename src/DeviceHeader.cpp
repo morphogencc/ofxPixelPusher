@@ -22,25 +22,9 @@ DeviceHeader::DeviceHeader(const unsigned char* packet, int packetLength) {
     std::printf("This is not expected to work.  Please update your PixelPusher.");
   }
         
-  mPacketRemainderLength = packetLength - sHeaderLength;
-  //replace this with std::vector and std::vector::assign()
   mPacketRemainder = std::shared_ptr<unsigned char>(new unsigned char[mPacketRemainderLength]);
+  mPacketRemainderLength = packetLength - sHeaderLength;
   memcpy(&mPacketRemainder.get()[0], &packet[sHeaderLength], mPacketRemainderLength);
-
-  /*
-    strncpy(this->macAddress, (char*)packet, 6);
-    intf("Mac Addres: %s", this->macAddress);
-    strncpy(this->ipAddress, (char*)packet+6, 4);
-    printf("IP Addres: %s", this->ipAddress);
-    this->deviceType = (DeviceType)packet[10];
-    this->protocolVersion = (int)packet[11];
-    this->vendorId = ByteUtils::unsignedCharToShort(packet,12,13);
-    this->productId = ByteUtils::unsignedCharToShort(packet,14,15);
-    this->hardwareRevision = ByteUtils::unsignedCharToShort(packet,16,17);
-    this->softwareRevision = ByteUtils::unsignedCharToShort(packet,18,19);
-    this->linkSpeed = ByteUtils::unsignedCharToLong(packet,20,23);
-    strncpy(this->packetRemainder, (char*)packet + 24, (76 - 24));
-  */
 }
 
 DeviceHeader::~DeviceHeader() {

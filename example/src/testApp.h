@@ -20,5 +20,7 @@ class testApp : public ofBaseApp{
   void gotMessage(ofMessage msg);
   void exit();
  private:
-  DiscoveryListener* listener;
+  DiscoveryListener* mListener;
+  int mCount;
+  int mIncrement;
 };

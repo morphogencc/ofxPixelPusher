@@ -3,7 +3,7 @@
 
 DeviceHeader::DeviceHeader(const unsigned char* packet, int packetLength) {
   if(packetLength < sHeaderLength) {
-    sdfLog::logFormat("Incorrect package length in DeviceHeader constructor!");
+    std::printf("Incorrect package length in DeviceHeader constructor!");
   }
 
   memcpy(&mMacAddress[0], &packet[0], 6);
@@ -17,9 +17,9 @@ DeviceHeader::DeviceHeader(const unsigned char* packet, int packetLength) {
   memcpy(&mLinkSpeed, &packet[20], 4);
 
   if(mSoftwareRevision < mOldestAcceptableSoftwareRevision) {
-    sdfLog::logFormat("This PixelPusher Library requires firmware revision %f", mOldestAcceptableSoftwareRevision / 100.0);
-    sdfLog::logFormat("This PixelPusher is using %f", mSoftwareRevision / 100.0);
-    sdfLog::logFormat("This is not expected to work.  Please update your PixelPusher.");
+    std::printf("This PixelPusher Library requires firmware revision %f", mOldestAcceptableSoftwareRevision / 100.0);
+    std::printf("This PixelPusher is using %f", mSoftwareRevision / 100.0);
+    std::printf("This is not expected to work.  Please update your PixelPusher.");
   }
         
   mPacketRemainderLength = packetLength - sHeaderLength;

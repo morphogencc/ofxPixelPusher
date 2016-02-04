@@ -1,3 +1,10 @@
+/*
+* PixelPusher
+* Dec 2014
+* nathan lachenmyer
+* http://morphogen.cc/
+*/
+
 #pragma once
 
 #include <memory>

@@ -1,15 +1,11 @@
 # ofxPixelPusher
 
-c++ implementation of pixelpusher software using openframeworks
+A C++ implementation of pixelpusher software.
+
+NOTE: This codebase currently does not function; it is fully functional except for a network library.  I'm currently working on using asio to provide the network functionality, though if someone beats me to it I'll take whatever I can get.
 
 ## Requirements
-This addon reqires `ofxNetwork`, which is a standard part of openFrameworks.  It intentionally uses as little of
-openFrameworks as possible, so hopefully if you need this for another framework, it won't be too difficult to port.
-
-openFrameworks is used for:
-- threading (`ofThread`)
-- network management (`ofxUdpManager`)
-- logging (`ofLog`)
+This implementation of the pixelpusher protocol attempts to be as framework-agnostic as possible; thus, it tries to avoid using openFrameworks-specific classes such as `ofLog` and `ofThread`, instead using the c++ equivalents.
 
 ## Usage
 In your application, create a `DiscoveryListener` instance using `DiscoveryListener::getInstance()`.  This creates a
@@ -29,7 +25,7 @@ Once a PixelPusher is selected, strips can be assigned values with
 - `setStripValues(int stripNumber, std::vector<shared_ptr<Pixel> > pixels)`
 
 The first method sets all pixels in the strip `stripNumber` to the same color, while the latter method copies the vector
-of `Pixel` objects directly to the `Strip` objects.
+of `Pixel` objects directly to the `Strip` objects.  See the header file `Strip.h` for a more exhaustive listing of ways to set pixels.
 
 Alternatively, you can call `getStrips()` on a `PixelPusher` object to get a deque of strips that you can iterate
 through, or `getStrip(int stripNumber)` to get a pointer to a particular strip.  Once you have a pointer to a `Strip`,
@@ -46,6 +42,10 @@ its own thread.  As long as you update the strips to reflect current data, every
 ## Useful Abstractions
 
 ## Examples
+
+## Contributing
+
+This project uses the [Git Flow](http://nvie.com/posts/a-successful-git-branching-model/) paradigm.  Before contributing, please make your own feature branch with your changes.
 
 ## More Information
 For more info about PixelPusher visit:

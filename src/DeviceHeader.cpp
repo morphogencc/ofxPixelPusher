@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "DeviceHeader.h"
 
-DeviceHeader::DeviceHeader(unsigned char* packet, int packetLength) {
+DeviceHeader::DeviceHeader(const unsigned char* packet, int packetLength) {
   if(packetLength < sHeaderLength) {
     sdfLog::logFormat("Incorrect package length in DeviceHeader constructor!");
   }

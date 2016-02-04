@@ -17,8 +17,7 @@
 #include <thread>
 #include <mutex>
 #include <ctime>
-#include "sdfWindows.hpp"
-#include "sdfServerSocket.hpp"
+#include "UDPReceiver.hpp"
 #include "PixelPusher.h"
 
 class DiscoveryListener {
@@ -32,15 +31,13 @@ class DiscoveryListener {
  private:
   DiscoveryListener();
   ~DiscoveryListener();
-  void update();
+  void update(UDPMessage udpMessage);
   void addNewPusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
   void updatePusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
   void updatePusherMap();
   static DiscoveryListener* mDiscoveryService;
-	sdfServerSocket* mUdpConnection;
+  std::shared_ptr<UDPReceiver> mDiscoveryServiceSocket;
   int mMessageFlag;
-  std::vector<char> mIncomingUdpMessage;
-  std::vector<unsigned char> mUdpMessage;
   static const int mIncomingPacketSize = 76;
   static const int mPort = 7331;
   bool mAutoThrottle;

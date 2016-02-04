@@ -17,8 +17,7 @@
 #include <chrono>
 #include "Strip.h"
 #include "DeviceHeader.h"
-#include "sdfWindows.hpp"
-#include "sdfServerSocket.hpp"
+#include "UDPSender.hpp"
 
 class PixelPusher {
  public:
@@ -56,16 +55,15 @@ class PixelPusher {
   bool isAlive();
   void createCardThread();
   void destroyCardThread();
- private:
+ protected:
   void createStrips();
   void sendPacket();
   static const int mTimeoutTime = 5;
   static const int mFrameLimit = 60;
-  sdfServerSocket* mUdpConnection;
+  std::shared_ptr<UDPSender> mUdpConnection;
   long mPusherFlags;
   DeviceHeader* mDeviceHeader;
   long mPacketNumber;
-  //unsigned char* mPacket;
   std::vector<unsigned char> mPacket;
   short mPort;
   short mStripsAttached;

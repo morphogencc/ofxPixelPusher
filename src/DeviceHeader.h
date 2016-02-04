@@ -4,7 +4,6 @@
 #include <string>
 #include <stdio.h>
 #include <iostream>
-#include "sdfWindows.hpp"
 
 enum DeviceType {
   ETHERDREAM, 
@@ -14,7 +13,7 @@ enum DeviceType {
 
 class DeviceHeader {
  public:
-  DeviceHeader(unsigned char* packet, int packetLength);
+  DeviceHeader(const unsigned char* packet, int packetLength);
   ~DeviceHeader();
   std::string getMacAddressString();
   std::string getIpAddressString();

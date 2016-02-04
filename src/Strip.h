@@ -21,7 +21,7 @@ class Strip {
   //void setPixel(int position, unsigned char r, unsigned char g, unsigned char b, unsigned char o, unsigned char w);
   void setPixel(int position, std::shared_ptr<Pixel> pixel);
   std::vector<std::shared_ptr<Pixel> > getPixels();
-  int getNumPixels();
+  int getNumberOfPixels();
   void setPowerScale(double powerscale);
   void serialize();
   unsigned char* getPixelData(); //remove

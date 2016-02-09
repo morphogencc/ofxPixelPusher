@@ -8,6 +8,8 @@
 #pragma once
 
 //forward declare Strip so I don't get a Pixel<->Strip interdependency
+namespace ofxPixelPusher {
+
 class Strip;
 
 class Pixel {
@@ -31,3 +33,5 @@ class Pixel {
   static unsigned char mLinearExp[256];
   
 };
+
+}

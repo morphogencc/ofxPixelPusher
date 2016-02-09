@@ -1,7 +1,8 @@
-#include "stdafx.h"
 #include "PixelPusher.h"
 #include <algorithm>
 #include <ctime>
+
+using namespace ofxPixelPusher;
 
 PixelPusher::PixelPusher(DeviceHeader* header) {
 	mArtnetUniverse = 0;
@@ -177,7 +178,7 @@ void PixelPusher::sendPacket() {
 			payload = false;
 			packetLength = 0;
 			mPacket.clear();
-			
+
 			mPacket.push_back((mPacketNumber >> 24) & 0xFF);
 			mPacket.push_back((mPacketNumber >> 16) & 0xFF);
 			mPacket.push_back((mPacketNumber >> 8) & 0xFF);

@@ -1,5 +1,6 @@
-#include "stdafx.h"
 #include "Strip.h"
+
+using namespace ofxPixelPusher;
 
 Strip::Strip(short stripNumber, int length) {
 	mPixels.reserve(length);
@@ -73,7 +74,12 @@ int Strip::getNumberOfPixels() {
 }
 
 void Strip::setPowerScale(double powerscale) {
-	mPowerScale = powerscale;
+	if (powerscale < 1.0 && powerscale > 0.0) {
+		mPowerScale = powerscale;
+	}
+	else {
+		std::printf("Strip::setPowerScale -- power scale set out of bounds (0, 1).  Please set the power scale between 0 and 1!");
+	}
 }
 
 void Strip::serialize() {

@@ -4,11 +4,11 @@
  * nathan lachenmyer
  */
 
-
-#include "stdafx.h"
 #include <memory>
 #include "DiscoveryListener.h"
 #include "DeviceHeader.h"
+
+using namespace ofxPixelPusher;
 
 DiscoveryListener* DiscoveryListener::mDiscoveryService = NULL;
 

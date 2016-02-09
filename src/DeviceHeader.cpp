@@ -1,5 +1,6 @@
-#include "stdafx.h"
 #include "DeviceHeader.h"
+
+using namespace ofxPixelPusher;
 
 DeviceHeader::DeviceHeader(const unsigned char* packet, int packetLength) {
   if(packetLength < sHeaderLength) {

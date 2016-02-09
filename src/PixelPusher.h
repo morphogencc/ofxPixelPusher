@@ -19,7 +19,9 @@
 #include "DeviceHeader.h"
 #include "UDPSender.hpp"
 
-class PixelPusher {
+namespace ofxPixelPusher {
+
+	class PixelPusher {
  public:
   PixelPusher(DeviceHeader* header);
   ~PixelPusher();
@@ -93,3 +95,5 @@ class PixelPusher {
   std::vector<unsigned char> mStripFlags;
   std::deque<std::shared_ptr<Strip> > mStrips;
 };
+
+}

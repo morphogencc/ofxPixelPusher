@@ -43,9 +43,10 @@ its own thread.  As long as you update the strips to reflect current data, every
 
 ## Examples
 
-## Contributing
-
+## Contributions
 This project uses the [Git Flow](http://nvie.com/posts/a-successful-git-branching-model/) paradigm.  Before contributing, please make your own feature branch with your changes.
+
+This project was originally developed at [Small Design Firm](http://www.smalldesignfirm.com/), before being open sourced on Github.
 
 ## More Information
 For more info about PixelPusher visit:

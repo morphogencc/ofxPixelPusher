@@ -13,78 +13,78 @@ unsigned char Pixel::mLinearExp[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 209, 214, 219, 224, 229, 234, 239, 244, 249, 255 };
 
 Pixel::Pixel() {
-  mUseAntiLog = true;
-  mRed = 0;
-  mGreen = 0;
-  mBlue = 0;
-  mOrange = 0;
-  mWhite = 0;
+	mUseAntiLog = true;
+	mRed = 0;
+	mGreen = 0;
+	mBlue = 0;
+	mOrange = 0;
+	mWhite = 0;
 }
 
 Pixel::Pixel(unsigned char r, unsigned char g, unsigned char b) {
-  mUseAntiLog = true;
-  mRed = r;
-  mGreen = g;
-  mBlue = b;
-  mOrange = 0;
-  mWhite = 0;
+	mUseAntiLog = true;
+	mRed = r;
+	mGreen = g;
+	mBlue = b;
+	mOrange = 0;
+	mWhite = 0;
 }
 
 Pixel::Pixel(unsigned char r, unsigned char g, unsigned char b, unsigned char o, unsigned char w) {
-  mUseAntiLog = true;
-  mRed = r;
-  mGreen = g;
-  mBlue = b;
-  mOrange = o;
-  mWhite = w;
+	mUseAntiLog = true;
+	mRed = r;
+	mGreen = g;
+	mBlue = b;
+	mOrange = o;
+	mWhite = w;
 }
 
 Pixel::~Pixel() {
-  
+
 }
 
 void Pixel::setColor(unsigned char r, unsigned char g, unsigned char b) {
-  if(mUseAntiLog) {
-    mRed = mLinearExp[r];
-    mGreen = mLinearExp[g];
-    mBlue = mLinearExp[b];
-    mOrange = 0;
-    mWhite = 0;
-  }
-  else {
-    mRed = r;
-    mGreen = g;
-    mBlue = b;
-    mOrange = 0;
-    mWhite = 0;
-  }
+	if (mUseAntiLog) {
+		mRed = mLinearExp[r];
+		mGreen = mLinearExp[g];
+		mBlue = mLinearExp[b];
+		mOrange = 0;
+		mWhite = 0;
+	}
+	else {
+		mRed = r;
+		mGreen = g;
+		mBlue = b;
+		mOrange = 0;
+		mWhite = 0;
+	}
 }
 
 void Pixel::setColor(unsigned char r, unsigned char g, unsigned char b, unsigned char o, unsigned char w) {
-  if(mUseAntiLog) {
-    mRed = mLinearExp[r];
-    mGreen = mLinearExp[g];
-    mBlue = mLinearExp[b];
-    mOrange = mLinearExp[o];
-    mWhite = mLinearExp[w];
-  }
-  else {
-    mRed = r;
-    mGreen = g;
-    mBlue = b;
-    mOrange = o;
-    mWhite = w;
-  }
+	if (mUseAntiLog) {
+		mRed = mLinearExp[r];
+		mGreen = mLinearExp[g];
+		mBlue = mLinearExp[b];
+		mOrange = mLinearExp[o];
+		mWhite = mLinearExp[w];
+	}
+	else {
+		mRed = r;
+		mGreen = g;
+		mBlue = b;
+		mOrange = o;
+		mWhite = w;
+	}
 }
 
 void Pixel::setColor(Pixel pixel) {
-  mRed = pixel.mRed;
-  mGreen = pixel.mGreen;
-  mBlue = pixel.mBlue;
-  mOrange = pixel.mOrange;
-  mWhite = pixel.mWhite;
+	mRed = pixel.mRed;
+	mGreen = pixel.mGreen;
+	mBlue = pixel.mBlue;
+	mOrange = pixel.mOrange;
+	mWhite = pixel.mWhite;
 }
 
 void Pixel::setAntiLog(bool useAntiLog) {
-  mUseAntiLog = useAntiLog;
+	mUseAntiLog = useAntiLog;
 }

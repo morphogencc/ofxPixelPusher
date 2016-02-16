@@ -29,11 +29,12 @@ namespace ofxPixelPusher {
 		std::deque<std::shared_ptr<Strip> > getStrips();
 		std::deque<std::shared_ptr<Strip> > getTouchedStrips();
 		std::shared_ptr<Strip> getStrip(int stripNumber);
-		void addStrip(std::shared_ptr<Strip> strip);
 		int getMaxStripsPerPacket();
 		int getPixelsPerStrip(int stripNumber);
 		void setStripValues(int stripNumber, unsigned char red, unsigned char green, unsigned char blue);
 		void setStripValues(int stripNumber, std::vector<std::shared_ptr<Pixel> > pixels);
+		void setPowerScale(double powerscale);
+		void setPowerScale(int stripNumber, double powerscale);
 		std::string getMacAddress();
 		std::string getIpAddress();
 		long getGroupId();
@@ -59,6 +60,7 @@ namespace ofxPixelPusher {
 		void destroyCardThread();
 	protected:
 		void createStrips();
+		void addStrip(std::shared_ptr<Strip> strip);
 		void sendPacket();
 		static const int mTimeoutTime = 5;
 		static const int mFrameLimit = 60;

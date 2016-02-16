@@ -56,13 +56,23 @@ void Strip::setPixels(std::vector<std::shared_ptr<Pixel> > pixels) {
 }
 
 void Strip::setPixel(int position, unsigned char r, unsigned char g, unsigned char b) {
-	mPixels[position]->setColor(r, g, b);
-	mTouched = true;
+	if (position < mPixels.size() - 1) {
+		mPixels[position]->setColor(r, g, b);
+		mTouched = true;
+	}
+	else {
+		std::printf("Strip::setPixel ERROR -- Invalid pixel number %d.", position);
+	}
 }
 
 void Strip::setPixel(int position, std::shared_ptr<Pixel> pixel) {
-	mPixels[position] = pixel;
-	mTouched = true;
+	if (position < mPixels.size() - 1) {
+		mPixels[position] = pixel;
+		mTouched = true;
+	}
+	else {
+		std::printf("Strip::setPixel ERROR -- Invalid pixel number %d.", position);
+	}
 }
 
 std::vector<std::shared_ptr<Pixel> > Strip::getPixels() {

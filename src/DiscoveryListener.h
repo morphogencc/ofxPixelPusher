@@ -17,6 +17,7 @@
 #include <thread>
 #include <mutex>
 #include <ctime>
+#include "sdfWindows.hpp"
 #include "UDPReceiver.hpp"
 #include "PixelPusher.h"
 

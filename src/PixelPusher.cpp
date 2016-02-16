@@ -19,6 +19,11 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
 	mGroupId = 0;
 	mSegments = 0;
 	mPowerDomain = 0;
+	mPacketNumber = 0;
+	mThreadDelay = 0;
+	mThreadExtraDelay = 0;
+	mTotalDelay = 0;
+	mRunCardThread = NULL;
 
 	mMulticast = false;
 	mMulticastPrimary = false;
@@ -103,7 +108,13 @@ void PixelPusher::addStrip(std::shared_ptr<Strip> strip) {
 }
 
 std::shared_ptr<Strip> PixelPusher::getStrip(int stripNumber) {
-	return mStrips.at(stripNumber);
+	if (stripNumber < mStrips.size() - 1) {
+		return mStrips.at(stripNumber);
+	}
+	else {
+		std::printf("PixelPusher::getStrip ERROR -- Invalid strip number %d.  Returning empty strip.", stripNumber);
+		return std::shared_ptr<Strip>();
+	}
 }
 
 int PixelPusher::getMaxStripsPerPacket() {
@@ -111,15 +122,46 @@ int PixelPusher::getMaxStripsPerPacket() {
 }
 
 int PixelPusher::getPixelsPerStrip(int stripNumber) {
-	return mStrips.at(stripNumber)->getLength();
+	if (stripNumber < mStrips.size() - 1) {
+		return mStrips.at(stripNumber)->getLength();
+	}
+	else {
+		std::printf("PixelPusher::getPixelsPerStrip ERROR -- Invalid strip number %d", stripNumber);
+		return 0;
+	}
 }
 
 void PixelPusher::setStripValues(int stripNumber, unsigned char red, unsigned char green, unsigned char blue) {
-	mStrips.at(stripNumber)->setPixels(red, green, blue);
+	if (stripNumber < mStrips.size() - 1) {
+		mStrips.at(stripNumber)->setPixels(red, green, blue);
+	}
+	else {
+		std::printf("PixelPusher::setStripValues ERROR -- Invalid strip number %d", stripNumber);
+	}
 }
 
 void PixelPusher::setStripValues(int stripNumber, std::vector<std::shared_ptr<Pixel> > pixels) {
-	mStrips.at(stripNumber)->setPixels(pixels);
+	if (stripNumber < mStrips.size() - 1) {
+		mStrips.at(stripNumber)->setPixels(pixels);
+	}
+	else {
+		std::printf("PixelPusher::setStripValues ERROR -- Invalid strip number %d", stripNumber);
+	}
+}
+
+void PixelPusher::setPowerScale(double powerScale) {
+	for (auto strip : mStrips) {
+		strip->setPowerScale(powerScale);
+	}
+}
+
+void PixelPusher::setPowerScale(int stripNumber, double powerScale) {
+	if (stripNumber < mStrips.size() - 1) {
+		mStrips.at(stripNumber)->setPowerScale(powerScale);
+	}
+	else {
+		std::printf("PixelPusher::setPowerScale ERROR -- Invalid strip number %d", stripNumber);
+	}
 }
 
 std::string PixelPusher::getMacAddress() {
@@ -132,7 +174,6 @@ std::string PixelPusher::getIpAddress() {
 
 void PixelPusher::sendPacket() {
 	bool payload = false;
-	long packetLength = 0;
 	mThreadDelay = 16.0;
 	mPacket.clear();
 	mRunCardThread = true;
@@ -158,25 +199,9 @@ void PixelPusher::sendPacket() {
 			this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
 		}
 
-		/*
-		  else if (mSendReset) {
-		  std::printf("Resetting PixelPusher %s at %s", getMacAddress().c_str(), getIpAddress().c_str());
-		  // update Packet number
-		  memcpy(&resetCmdData[0], &mPacketNumber, 4);
-
-		  // send packet
-		  mUdpConnection->Send(resetCmdBuffer);
-		  mPacketNumber++;
-
-		  mSendReset = false;
-		  return;
-		}
-		*/
-
 		while (!remainingStrips.empty()) {
 			//std::printf("Sending data to PixelPusher %s at %s:%d", getMacAddress().c_str(), getIpAddress().c_str(), mPort);
 			payload = false;
-			packetLength = 0;
 			mPacket.clear();
 
 			mPacket.push_back((mPacketNumber >> 24) & 0xFF);
@@ -192,8 +217,6 @@ void PixelPusher::sendPacket() {
 
 				std::shared_ptr<Strip> strip = remainingStrips.front();
 				strip->serialize();
-				unsigned char* stripData = strip->getPixelData();
-				int stripDataLength = strip->getPixelDataLength();
 				short stripNumber = strip->getStripNumber();
 				mPacket.push_back((stripNumber >> 8) & 0xFF);
 				mPacket.push_back(stripNumber & 0xFF);

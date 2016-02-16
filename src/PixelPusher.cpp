@@ -389,7 +389,7 @@ void PixelPusher::createStrips() {
 void PixelPusher::createCardThread() {
 	createStrips();
 
-	mUdpConnection = std::make_shared<UDPSender>();
+	mUdpConnection = std::make_shared<sdf_networking::UDPSender>();
 	mUdpConnection->connect(getIpAddress(), mPort);
 
 	std::printf("Connected to PixelPusher %s on port %d", getIpAddress().c_str(), mPort);

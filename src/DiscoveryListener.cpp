@@ -72,7 +72,7 @@ std::shared_ptr<PixelPusher> DiscoveryListener::getController(long groupId, long
 DiscoveryListener::DiscoveryListener() {
 	mDiscoveryServiceSocket = std::make_shared<sdf_networking::UDPReceiver>("0.0.0.0", mPort);
 
-	mDiscoveryServiceSocket->setOnReceive([this](sdf_networking::msg) {
+	mDiscoveryServiceSocket->setOnReceive([this](sdf_networking::UDPMessage msg) {
 		std::cout << msg.source_ip << " " << msg.source_port << " ";
 		DiscoveryListener::getInstance()->update(msg);
 	});

@@ -64,7 +64,7 @@ namespace ofxPixelPusher {
 		void sendPacket();
 		static const int mTimeoutTime = 5;
 		static const int mFrameLimit = 60;
-		std::shared_ptr<UDPSender> mUdpConnection;
+		std::shared_ptr<sdf_networking::UDPSender> mUdpConnection;
 		long mPusherFlags;
 		DeviceHeader* mDeviceHeader;
 		long mPacketNumber;

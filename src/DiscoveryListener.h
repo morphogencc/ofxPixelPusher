@@ -39,7 +39,7 @@ namespace ofxPixelPusher {
 		void updatePusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
 		void updatePusherMap();
 		static DiscoveryListener* mDiscoveryService;
-		std::shared_ptr<UDPReceiver> mDiscoveryServiceSocket;
+		std::shared_ptr<sdf_networking::UDPReceiver> mDiscoveryServiceSocket;
 		int mMessageFlag;
 		static const int mIncomingPacketSize = 76;
 		static const int mPort = 7331;

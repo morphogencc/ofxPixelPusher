@@ -38,7 +38,7 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
 	int packetLength = header->getPacketRemainderLength();
 
 	if (packetLength < 28) {
-		std::printf("Packet size is too small! PixelPusher can't be created.");
+		std::printf("Packet size is too small! PixelPusher can't be created.\n");
 	}
 
 	memcpy(&mStripsAttached, &packetRemainder.get()[0], 1);
@@ -123,7 +123,7 @@ int PixelPusher::getMaxStripsPerPacket() {
 }
 
 int PixelPusher::getPixelsPerStrip(int stripNumber) {
-	if (stripNumber < mStrips.size() - 1) {
+	if (stripNumber < mStrips.size()) {
 		return mStrips.at(stripNumber)->getLength();
 	}
 	else {
@@ -133,7 +133,7 @@ int PixelPusher::getPixelsPerStrip(int stripNumber) {
 }
 
 void PixelPusher::setStripValues(int stripNumber, unsigned char red, unsigned char green, unsigned char blue) {
-	if (stripNumber < mStrips.size() - 1) {
+	if (stripNumber < mStrips.size()) {
 		mStrips.at(stripNumber)->setPixels(red, green, blue);
 	}
 	else {
@@ -142,7 +142,7 @@ void PixelPusher::setStripValues(int stripNumber, unsigned char red, unsigned ch
 }
 
 void PixelPusher::setStripValues(int stripNumber, std::vector<std::shared_ptr<Pixel> > pixels) {
-	if (stripNumber < mStrips.size() - 1) {
+	if (stripNumber < mStrips.size()) {
 		mStrips.at(stripNumber)->setPixels(pixels);
 	}
 	else {
@@ -157,7 +157,7 @@ void PixelPusher::setPowerScale(double powerScale) {
 }
 
 void PixelPusher::setPowerScale(int stripNumber, double powerScale) {
-	if (stripNumber < mStrips.size() - 1) {
+	if (stripNumber < mStrips.size()) {
 		mStrips.at(stripNumber)->setPowerScale(powerScale);
 	}
 	else {

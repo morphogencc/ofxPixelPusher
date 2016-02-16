@@ -62,7 +62,7 @@ void Strip::setPixel(int position, unsigned char r, unsigned char g, unsigned ch
 		mTouched = true;
 	}
 	else {
-		std::printf("Strip::setPixel ERROR -- Invalid pixel number %d.", position);
+		std::printf("Strip::setPixel ERROR -- Invalid pixel number %d.\n", position);
 	}
 }
 
@@ -72,7 +72,7 @@ void Strip::setPixel(int position, std::shared_ptr<Pixel> pixel) {
 		mTouched = true;
 	}
 	else {
-		std::printf("Strip::setPixel ERROR -- Invalid pixel number %d.", position);
+		std::printf("Strip::setPixel ERROR -- Invalid pixel number %d.\n", position);
 	}
 }
 
@@ -89,7 +89,7 @@ void Strip::setPowerScale(double powerscale) {
 		mPowerScale = powerscale;
 	}
 	else {
-		std::printf("Strip::setPowerScale -- power scale set out of bounds (0, 1).  Please set the power scale between 0 and 1!");
+		std::printf("Strip::setPowerScale -- power scale set out of bounds (0, 1).  Please set the power scale between 0 and 1!\n");
 	}
 }
 

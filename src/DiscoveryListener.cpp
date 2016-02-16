@@ -78,7 +78,7 @@ DiscoveryListener::DiscoveryListener() {
 	});
 
 	mDiscoveryServiceSocket->start();
-	std::printf("Starting Discovery Listener Service...");
+	std::printf("Starting Discovery Listener Service...\n");
 
 	mAutoThrottle = true;
 	mFrameLimit = 60;
@@ -93,7 +93,7 @@ DiscoveryListener::~DiscoveryListener() {
 }
 
 void DiscoveryListener::update(sdf_networking::UDPMessage udpMessage) {
-	std::printf("Updating registry...");
+	std::printf("Updating registry...\n");
 	mUpdateMutex.lock();
 	DeviceHeader* header;
 
@@ -111,19 +111,19 @@ void DiscoveryListener::update(sdf_networking::UDPMessage udpMessage) {
 	if (mPusherMap.count(macAddress) == 0) {
 		//does not already exist in the map
 		addNewPusher(macAddress, incomingDevice);
-		std::printf("Adding new PixelPusher %s at address %s", macAddress.c_str(), ipAddress.c_str());
+		std::printf("Adding new PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
 	}
 	else {
 		//already exists in the map
 		if (!mPusherMap[macAddress]->isEqual(incomingDevice)) {
 			//if the pushers are not equal, replace it with this one
 			updatePusher(macAddress, incomingDevice);
-			std::printf("Updating PixelPusher %s at address %s", macAddress.c_str(), ipAddress.c_str());
+			std::printf("Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
 		}
 		else {
 			//if they're the same, then just update it
 			mPusherMap[macAddress]->updateVariables(incomingDevice);
-			std::printf("Updating PixelPusher %s at address %s", macAddress.c_str(), ipAddress.c_str());
+			std::printf("Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
 			if (incomingDevice->getDeltaSequence() > 3) {
 				mPusherMap[macAddress]->increaseExtraDelay(5);
 			}
@@ -153,7 +153,7 @@ void DiscoveryListener::updatePusherMap() {
 		for (std::map<std::string, std::shared_ptr<PixelPusher> >::iterator pusher = mPusherMap.begin(); pusher != mPusherMap.end();) {
 			//pusher->first is Mac Address, pusher->second is the shared pointer to the PixelPusher
 			if (!pusher->second->isAlive()) {
-				std::printf("DiscoveryListener removing PixelPusher %s from all maps.", pusher->first.c_str());
+				std::printf("DiscoveryListener removing PixelPusher %s from all maps.\n", pusher->first.c_str());
 				pusher->second->destroyCardThread();
 				//remove pusher from maps
 				mLastSeenMap.erase(pusher->first);

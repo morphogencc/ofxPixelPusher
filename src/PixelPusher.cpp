@@ -109,7 +109,7 @@ void PixelPusher::addStrip(std::shared_ptr<Strip> strip) {
 }
 
 std::shared_ptr<Strip> PixelPusher::getStrip(int stripNumber) {
-	if (stripNumber < mStrips.size() - 1) {
+	if (stripNumber < mStrips.size()) {
 		return mStrips.at(stripNumber);
 	}
 	else {

@@ -57,7 +57,7 @@ void Strip::setPixels(std::vector<std::shared_ptr<Pixel> > pixels) {
 }
 
 void Strip::setPixel(int position, unsigned char r, unsigned char g, unsigned char b) {
-	if (position < mPixels.size() - 1) {
+	if (position < mPixels.size()) {
 		mPixels[position]->setColor(r, g, b);
 		mTouched = true;
 	}
@@ -67,7 +67,7 @@ void Strip::setPixel(int position, unsigned char r, unsigned char g, unsigned ch
 }
 
 void Strip::setPixel(int position, std::shared_ptr<Pixel> pixel) {
-	if (position < mPixels.size() - 1) {
+	if (position < mPixels.size()) {
 		mPixels[position] = pixel;
 		mTouched = true;
 	}

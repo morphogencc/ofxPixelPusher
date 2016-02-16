@@ -24,8 +24,8 @@ DeviceHeader::DeviceHeader(const unsigned char* packet, int packetLength) {
     std::printf("This is not expected to work.  Please update your PixelPusher.");
   }
         
-  mPacketRemainder = std::shared_ptr<unsigned char>(new unsigned char[mPacketRemainderLength]);
   mPacketRemainderLength = packetLength - sHeaderLength;
+  mPacketRemainder = std::shared_ptr<unsigned char>(new unsigned char[mPacketRemainderLength]);
   memcpy(&mPacketRemainder.get()[0], &packet[sHeaderLength], mPacketRemainderLength);
 }
 

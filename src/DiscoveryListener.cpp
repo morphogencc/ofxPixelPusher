@@ -70,7 +70,7 @@ std::shared_ptr<PixelPusher> DiscoveryListener::getController(long groupId, long
 
 DiscoveryListener::DiscoveryListener() {
 	mDiscoveryServiceSocket.Create();
-	mDiscoveryServiceSocket.Bind(mPort);
+	mDiscoveryServiceSocket.BindMcast("0.0.0.0", mPort);
 	mDiscoveryServiceSocket.SetNonBlocking(true);
 	std::printf("Starting Discovery Listener Service...\n");
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "DeviceHeader.h"
 
 using namespace ofxPixelPusher;

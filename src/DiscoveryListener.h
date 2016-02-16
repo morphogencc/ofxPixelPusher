@@ -17,9 +17,8 @@
 #include <thread>
 #include <mutex>
 #include <ctime>
-#include "sdfWindows.hpp"
-#include "UDPReceiver.hpp"
 #include "PixelPusher.h"
+#include "ofxUDPManager.h"
 
 namespace ofxPixelPusher {
 
@@ -31,15 +30,16 @@ namespace ofxPixelPusher {
 		std::vector<std::shared_ptr<PixelPusher> > getPushers();
 		std::vector<std::shared_ptr<PixelPusher> > getGroup(long groupId);
 		std::shared_ptr<PixelPusher> getController(long groupId, long controllerId);
+		void receive();
 	private:
 		DiscoveryListener();
 		~DiscoveryListener();
-		void update(UDPMessage udpMessage);
+		void update(std::string udpMessage);
 		void addNewPusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
 		void updatePusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
 		void updatePusherMap();
 		static DiscoveryListener* mDiscoveryService;
-		std::shared_ptr<UDPReceiver> mDiscoveryServiceSocket;
+		ofxUDPManager mDiscoveryServiceSocket;
 		int mMessageFlag;
 		static const int mIncomingPacketSize = 76;
 		static const int mPort = 7331;

@@ -1,5 +1,6 @@
 #include "testApp.h"
 
+using namespace ofxPixelPusher;
 //--------------------------------------------------------------
 void testApp::setup(){
   mListener = DiscoveryListener::getInstance();
@@ -8,7 +9,8 @@ void testApp::setup(){
 }
 
 //--------------------------------------------------------------
-void testApp::update(){
+void testApp::update() {
+	mListener->receive();
   for (auto pusher : mListener->getPushers()) {
     for (auto strip : pusher->getStrips()) {
       strip->setPixels(255 - mCount, 0, mCount);

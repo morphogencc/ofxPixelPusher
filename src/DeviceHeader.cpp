@@ -4,7 +4,7 @@ using namespace ofxPixelPusher;
 
 DeviceHeader::DeviceHeader(const unsigned char* packet, int packetLength) {
   if(packetLength < sHeaderLength) {
-    std::printf("Incorrect package length in DeviceHeader constructor!");
+    std::printf("Incorrect package length in DeviceHeader constructor!\n");
   }
 
   memcpy(&mMacAddress[0], &packet[0], 6);
@@ -18,13 +18,13 @@ DeviceHeader::DeviceHeader(const unsigned char* packet, int packetLength) {
   memcpy(&mLinkSpeed, &packet[20], 4);
 
   if(mSoftwareRevision < mOldestAcceptableSoftwareRevision) {
-    std::printf("This PixelPusher Library requires firmware revision %f", mOldestAcceptableSoftwareRevision / 100.0);
-    std::printf("This PixelPusher is using %f", mSoftwareRevision / 100.0);
-    std::printf("This is not expected to work.  Please update your PixelPusher.");
+    std::printf("This PixelPusher Library requires firmware revision %f\n", mOldestAcceptableSoftwareRevision / 100.0);
+    std::printf("This PixelPusher is using %f\n", mSoftwareRevision / 100.0);
+    std::printf("This is not expected to work.  Please update your PixelPusher.\n");
   }
         
-  mPacketRemainder = std::shared_ptr<unsigned char>(new unsigned char[mPacketRemainderLength]);
   mPacketRemainderLength = packetLength - sHeaderLength;
+  mPacketRemainder = std::shared_ptr<unsigned char>(new unsigned char[mPacketRemainderLength]);
   memcpy(&mPacketRemainder.get()[0], &packet[sHeaderLength], mPacketRemainderLength);
 }
 

@@ -17,7 +17,7 @@
 #include <chrono>
 #include "Strip.h"
 #include "DeviceHeader.h"
-#include "UDPSender.hpp"
+#include "ofxUDPManager.h"
 
 namespace ofxPixelPusher {
 
@@ -64,7 +64,7 @@ namespace ofxPixelPusher {
 		void sendPacket();
 		static const int mTimeoutTime = 5;
 		static const int mFrameLimit = 60;
-		std::shared_ptr<UDPSender> mUdpConnection;
+		ofxUDPManager mUdpConnection;
 		long mPusherFlags;
 		DeviceHeader* mDeviceHeader;
 		long mPacketNumber;

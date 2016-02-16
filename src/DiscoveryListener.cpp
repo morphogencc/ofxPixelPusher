@@ -69,15 +69,10 @@ std::shared_ptr<PixelPusher> DiscoveryListener::getController(long groupId, long
 }
 
 DiscoveryListener::DiscoveryListener() {
-	mDiscoveryServiceSocket = std::make_shared<UDPReceiver>("0.0.0.0", mPort);
-
-	mDiscoveryServiceSocket->setOnReceive([this](UDPMessage msg) {
-		std::cout << msg.source_ip << " " << msg.source_port << " ";
-		DiscoveryListener::getInstance()->update(msg);
-	});
-
-	mDiscoveryServiceSocket->start();
-	std::printf("Starting Discovery Listener Service...");
+	mDiscoveryServiceSocket.Create();
+	mDiscoveryServiceSocket.Bind(mPort);
+	mDiscoveryServiceSocket.SetNonBlocking(true);
+	std::printf("Starting Discovery Listener Service...\n");
 
 	mAutoThrottle = true;
 	mFrameLimit = 60;
@@ -91,12 +86,20 @@ DiscoveryListener::~DiscoveryListener() {
 	}
 }
 
-void DiscoveryListener::update(UDPMessage udpMessage) {
-	std::printf("Updating registry...");
+void DiscoveryListener::receive() {
+	char udpMessage[4096];
+	int bytesReceived = mDiscoveryServiceSocket.Receive(udpMessage, 4096);
+	if (bytesReceived > 0) {
+		DiscoveryListener::getInstance()->update(std::string(udpMessage));
+	}
+}
+
+void DiscoveryListener::update(std::string udpMessage) {
+	std::printf("Updating registry...\n");
 	mUpdateMutex.lock();
 	DeviceHeader* header;
 
-	header = new DeviceHeader(reinterpret_cast<const unsigned char*> (udpMessage.content.c_str()), udpMessage.content.length());
+	header = new DeviceHeader(reinterpret_cast<const unsigned char*> (udpMessage.c_str()), udpMessage.length());
 	if (header->getDeviceType() != PIXELPUSHER) {
 		//if the device type isn't PixelPusher, end processing it right here.
 		return;
@@ -110,19 +113,19 @@ void DiscoveryListener::update(UDPMessage udpMessage) {
 	if (mPusherMap.count(macAddress) == 0) {
 		//does not already exist in the map
 		addNewPusher(macAddress, incomingDevice);
-		std::printf("Adding new PixelPusher %s at address %s", macAddress.c_str(), ipAddress.c_str());
+		std::printf("Adding new PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
 	}
 	else {
 		//already exists in the map
 		if (!mPusherMap[macAddress]->isEqual(incomingDevice)) {
 			//if the pushers are not equal, replace it with this one
 			updatePusher(macAddress, incomingDevice);
-			std::printf("Updating PixelPusher %s at address %s", macAddress.c_str(), ipAddress.c_str());
+			std::printf("Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
 		}
 		else {
 			//if they're the same, then just update it
 			mPusherMap[macAddress]->updateVariables(incomingDevice);
-			std::printf("Updating PixelPusher %s at address %s", macAddress.c_str(), ipAddress.c_str());
+			std::printf("Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
 			if (incomingDevice->getDeltaSequence() > 3) {
 				mPusherMap[macAddress]->increaseExtraDelay(5);
 			}
@@ -152,7 +155,7 @@ void DiscoveryListener::updatePusherMap() {
 		for (std::map<std::string, std::shared_ptr<PixelPusher> >::iterator pusher = mPusherMap.begin(); pusher != mPusherMap.end();) {
 			//pusher->first is Mac Address, pusher->second is the shared pointer to the PixelPusher
 			if (!pusher->second->isAlive()) {
-				std::printf("DiscoveryListener removing PixelPusher %s from all maps.", pusher->first.c_str());
+				std::printf("DiscoveryListener removing PixelPusher %s from all maps.\n", pusher->first.c_str());
 				pusher->second->destroyCardThread();
 				//remove pusher from maps
 				mLastSeenMap.erase(pusher->first);

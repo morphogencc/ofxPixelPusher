@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "PixelPusher.h"
 #include <algorithm>
 #include <ctime>

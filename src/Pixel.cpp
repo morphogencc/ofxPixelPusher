@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Pixel.h"
 
 using namespace ofxPixelPusher;

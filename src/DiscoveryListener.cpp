@@ -3,6 +3,7 @@
  * Aug 2014
  * nathan lachenmyer
  */
+#include "stdafx.h"
 
 #include <memory>
 #include "DiscoveryListener.h"
@@ -69,9 +70,9 @@ std::shared_ptr<PixelPusher> DiscoveryListener::getController(long groupId, long
 }
 
 DiscoveryListener::DiscoveryListener() {
-	mDiscoveryServiceSocket = std::make_shared<UDPReceiver>("0.0.0.0", mPort);
+	mDiscoveryServiceSocket = std::make_shared<sdf_networking::UDPReceiver>("0.0.0.0", mPort);
 
-	mDiscoveryServiceSocket->setOnReceive([this](UDPMessage msg) {
+	mDiscoveryServiceSocket->setOnReceive([this](sdf_networking::msg) {
 		std::cout << msg.source_ip << " " << msg.source_port << " ";
 		DiscoveryListener::getInstance()->update(msg);
 	});
@@ -91,7 +92,7 @@ DiscoveryListener::~DiscoveryListener() {
 	}
 }
 
-void DiscoveryListener::update(UDPMessage udpMessage) {
+void DiscoveryListener::update(sdf_networking::UDPMessage udpMessage) {
 	std::printf("Updating registry...");
 	mUpdateMutex.lock();
 	DeviceHeader* header;

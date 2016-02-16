@@ -34,7 +34,7 @@ namespace ofxPixelPusher {
 	private:
 		DiscoveryListener();
 		~DiscoveryListener();
-		void update(UDPMessage udpMessage);
+		void update(sdf_networking::UDPMessage udpMessage);
 		void addNewPusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
 		void updatePusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
 		void updatePusherMap();

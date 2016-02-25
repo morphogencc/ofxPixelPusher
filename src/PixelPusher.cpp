@@ -400,6 +400,7 @@ void PixelPusher::createCardThread() {
 }
 
 void PixelPusher::destroyCardThread() {
+	mRunCardThread = false;
 	if (mCardThread.joinable()) {
 		mCardThread.join();
 	}

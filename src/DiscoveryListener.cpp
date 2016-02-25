@@ -159,6 +159,15 @@ void DiscoveryListener::updatePusherMap() {
 			if (!pusher->second->isAlive()) {
 				std::printf("DiscoveryListener removing PixelPusher %s from all maps.\n", pusher->first.c_str());
 				pusher->second->destroyCardThread();
+				//remove from multimap -- more complicated
+				for (auto it = mGroupMap.lower_bound(pusher->second->getGroupId()); it != mGroupMap.end();) {
+					if (it->second->isEqual(pusher->second)) {
+						mGroupMap.erase(it++);
+					}
+					else {
+						++it;
+					}
+				}
 				//remove pusher from maps
 				mLastSeenMap.erase(pusher->first);
 				mPusherMap.erase(pusher++);

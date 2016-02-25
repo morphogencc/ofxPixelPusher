@@ -87,10 +87,12 @@ DiscoveryListener::~DiscoveryListener() {
 }
 
 void DiscoveryListener::receive() {
-	char udpMessage[4096];
-	int bytesReceived = mDiscoveryServiceSocket.Receive(udpMessage, 4096);
+	char udpMessage[84];
+	int bytesReceived = mDiscoveryServiceSocket.Receive(udpMessage, 84);
+	std::string msg = std::string(udpMessage);
+	std::printf("Received %d bytes", bytesReceived);
 	if (bytesReceived > 0) {
-		DiscoveryListener::getInstance()->update(std::string(udpMessage));
+		DiscoveryListener::getInstance()->update(msg);
 	}
 }
 

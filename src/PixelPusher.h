@@ -1,9 +1,9 @@
 /*
- * PixelPusher
- * Dec 2014
- * nathan lachenmyer
- * http://morphogen.cc/
- */
+* PixelPusher
+* Dec 2014
+* nathan lachenmyer
+* http://morphogen.cc/
+*/
 
 #pragma once
 
@@ -17,7 +17,7 @@
 #include <chrono>
 #include "Strip.h"
 #include "DeviceHeader.h"
-#include "UDPSender.hpp"
+#include "ofxUDPManager.h"
 
 namespace ofxPixelPusher {
 
@@ -64,7 +64,7 @@ namespace ofxPixelPusher {
 		void sendPacket();
 		static const int mTimeoutTime = 5;
 		static const int mFrameLimit = 60;
-		std::shared_ptr<sdf_networking::UDPSender> mUdpConnection;
+		ofxUDPManager mUdpConnection;
 		long mPusherFlags;
 		DeviceHeader* mDeviceHeader;
 		long mPacketNumber;

@@ -3,7 +3,6 @@
  * Aug 2014
  * nathan lachenmyer
  */
-#include "stdafx.h"
 
 #include <memory>
 #include "DiscoveryListener.h"
@@ -70,14 +69,9 @@ std::shared_ptr<PixelPusher> DiscoveryListener::getController(long groupId, long
 }
 
 DiscoveryListener::DiscoveryListener() {
-	mDiscoveryServiceSocket = std::make_shared<sdf_networking::UDPReceiver>("0.0.0.0", mPort);
-
-	mDiscoveryServiceSocket->setOnReceive([this](sdf_networking::UDPMessage msg) {
-		std::cout << msg.source_ip << " " << msg.source_port << " ";
-		DiscoveryListener::getInstance()->update(msg);
-	});
-
-	mDiscoveryServiceSocket->start();
+	mDiscoveryServiceSocket.Create();
+	mDiscoveryServiceSocket.BindMcast("0.0.0.0", mPort);
+	mDiscoveryServiceSocket.SetNonBlocking(true);
 	std::printf("Starting Discovery Listener Service...\n");
 
 	mAutoThrottle = true;
@@ -92,7 +86,17 @@ DiscoveryListener::~DiscoveryListener() {
 	}
 }
 
-void DiscoveryListener::update(sdf_networking::UDPMessage udpMessage) {
+void DiscoveryListener::receive() {
+	char udpMessage[84];
+	int bytesReceived = mDiscoveryServiceSocket.Receive(udpMessage, 84);
+	std::string msg = std::string(udpMessage);
+	std::printf("Received %d bytes", bytesReceived);
+	if (bytesReceived > 0) {
+		DiscoveryListener::getInstance()->update(msg);
+	}
+}
+
+void DiscoveryListener::update(std::string udpMessage) {
 	std::printf("Updating registry...\n");
 	mUpdateMutex.lock();
 	DeviceHeader* header;

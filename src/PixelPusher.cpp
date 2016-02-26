@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "PixelPusher.h"
 #include <algorithm>
 #include <ctime>
@@ -110,7 +109,7 @@ void PixelPusher::addStrip(std::shared_ptr<Strip> strip) {
 }
 
 std::shared_ptr<Strip> PixelPusher::getStrip(int stripNumber) {
-	if (stripNumber < mStrips.size()) {
+	if (stripNumber < mStrips.size() - 1) {
 		return mStrips.at(stripNumber);
 	}
 	else {
@@ -124,7 +123,7 @@ int PixelPusher::getMaxStripsPerPacket() {
 }
 
 int PixelPusher::getPixelsPerStrip(int stripNumber) {
-	if (stripNumber < mStrips.size()) {
+	if (stripNumber < mStrips.size() - 1) {
 		return mStrips.at(stripNumber)->getLength();
 	}
 	else {
@@ -134,7 +133,7 @@ int PixelPusher::getPixelsPerStrip(int stripNumber) {
 }
 
 void PixelPusher::setStripValues(int stripNumber, unsigned char red, unsigned char green, unsigned char blue) {
-	if (stripNumber < mStrips.size()) {
+	if (stripNumber < mStrips.size() - 1) {
 		mStrips.at(stripNumber)->setPixels(red, green, blue);
 	}
 	else {
@@ -143,7 +142,7 @@ void PixelPusher::setStripValues(int stripNumber, unsigned char red, unsigned ch
 }
 
 void PixelPusher::setStripValues(int stripNumber, std::vector<std::shared_ptr<Pixel> > pixels) {
-	if (stripNumber < mStrips.size()) {
+	if (stripNumber < mStrips.size() - 1) {
 		mStrips.at(stripNumber)->setPixels(pixels);
 	}
 	else {
@@ -158,7 +157,7 @@ void PixelPusher::setPowerScale(double powerScale) {
 }
 
 void PixelPusher::setPowerScale(int stripNumber, double powerScale) {
-	if (stripNumber < mStrips.size()) {
+	if (stripNumber < mStrips.size() - 1) {
 		mStrips.at(stripNumber)->setPowerScale(powerScale);
 	}
 	else {
@@ -390,8 +389,9 @@ void PixelPusher::createStrips() {
 void PixelPusher::createCardThread() {
 	createStrips();
 
-	mUdpConnection = std::make_shared<sdf_networking::UDPSender>();
-	mUdpConnection->connect(getIpAddress(), mPort);
+	mUdpConnection.Create();
+	mUdpConnection.Connect(getIpAddress().c_str(), mPort);
+	mUdpConnection.SetNonBlocking(true);
 
 	std::printf("Connected to PixelPusher %s on port %d\n", getIpAddress().c_str(), mPort);
 	mPacketNumber = 0;

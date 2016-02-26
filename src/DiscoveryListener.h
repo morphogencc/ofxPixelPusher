@@ -54,6 +54,8 @@ namespace ofxPixelPusher {
 		std::multimap<long, std::shared_ptr<PixelPusher> > mGroupMap;
 		std::thread mUpdateMapThread;
 		std::mutex mUpdateMutex;
+		std::vector<std::function<void(std::shared_ptr<PixelPusher>)>> mRegistrationCallbacks;
+		std::vector<std::function<void(std::shared_ptr<PixelPusher>)>> mRemovalCallbacks;
 	};
 
 }

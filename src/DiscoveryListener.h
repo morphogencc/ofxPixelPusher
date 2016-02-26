@@ -31,6 +31,8 @@ namespace ofxPixelPusher {
 		std::vector<std::shared_ptr<PixelPusher> > getPushers();
 		std::vector<std::shared_ptr<PixelPusher> > getGroup(long groupId);
 		std::shared_ptr<PixelPusher> getController(long groupId, long controllerId);
+		void addRegistrationCallback(std::function<void(std::shared_ptr<PixelPusher>)> callback_function);
+		void addRemovalCallback(std::function<void(std::shared_ptr<PixelPusher>)> callback_function);
 		void receive();
 	private:
 		DiscoveryListener();

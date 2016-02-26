@@ -180,3 +180,11 @@ void DiscoveryListener::updatePusherMap() {
 		this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
 }
+
+void DiscoveryListener::addRegistrationCallback(std::function<void(std::shared_ptr<PixelPusher>)> callback_function) {
+  mRegistrationCallbacks.push_back(callback_function);
+}
+
+void DiscoveryListener::addRemovalCallback(std::function<void(std::shared_ptr<PixelPusher>)> callback_function) {
+  mRemovalCallbacks.push_back(callback_function);
+}

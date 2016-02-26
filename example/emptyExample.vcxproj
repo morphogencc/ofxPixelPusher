@@ -115,6 +115,7 @@
     <ClInclude Include="..\src\Pixel.h" />
     <ClInclude Include="..\src\PixelPusher.h" />
     <ClInclude Include="..\src\Strip.h" />
+    <ClInclude Include="..\src\Utilities.h" />
     <ClInclude Include="src\testApp.h" />
   </ItemGroup>
   <ItemGroup>

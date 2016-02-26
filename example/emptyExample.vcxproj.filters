@@ -86,5 +86,8 @@
     <ClInclude Include="..\..\ofxNetwork\src\ofxUDPManager.h">
       <Filter>addons\ofxNetwork</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Utilities.h">
+      <Filter>addons\ofxPixelPusher</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

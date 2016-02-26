@@ -24,14 +24,6 @@ Strip::Strip(short stripNumber, int length) {
 Strip::~Strip() {
 }
 
-bool Strip::isRGBOW() {
-	return mIsRGBOW;
-}
-
-void Strip::setRGBOW(bool rgbow) {
-	//to implement -- not sure how exactly the conversion works
-}
-
 int Strip::getLength() {
 	return mPixels.size();
 }
@@ -51,6 +43,13 @@ void Strip::setPixels(unsigned char r, unsigned char g, unsigned char b) {
 	mTouched = true;
 }
 
+void Strip::setPixelsHSB(float hue, float saturation, float brightness) {
+	for (int i = 0; i < mPixels.size(); i++) {
+		mPixels[i]->setColorHSB(hue, saturation, brightness);
+	}
+	mTouched = true;
+}
+
 void Strip::setPixels(std::vector<std::shared_ptr<Pixel> > pixels) {
 	mPixels = pixels;
 	mTouched = true;
@@ -63,6 +62,16 @@ void Strip::setPixel(int position, unsigned char r, unsigned char g, unsigned ch
 	}
 	else {
 		std::printf("Strip::setPixel ERROR -- Invalid pixel number %d.\n", position);
+	}
+}
+
+void Strip::setPixelHSB(int position, float hue, float saturation, float brightness) {
+	if (position < mPixels.size()) {
+		mPixels[position]->setColorHSB(hue, saturation, brightness);
+		mTouched = true;
+	}
+	else {
+		std::printf("Strip::setPixelHSB ERROR -- Invalid pixel number %d.\n", position);
 	}
 }
 

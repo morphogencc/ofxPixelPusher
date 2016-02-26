@@ -17,9 +17,8 @@
 #include <thread>
 #include <mutex>
 #include <ctime>
-#include "sdfWindows.hpp"
-#include "UDPReceiver.hpp"
 #include "PixelPusher.h"
+#include "UDPReceiver.hpp"
 
 namespace ofxPixelPusher {
 
@@ -31,6 +30,7 @@ namespace ofxPixelPusher {
 		std::vector<std::shared_ptr<PixelPusher> > getPushers();
 		std::vector<std::shared_ptr<PixelPusher> > getGroup(long groupId);
 		std::shared_ptr<PixelPusher> getController(long groupId, long controllerId);
+		void receive();
 	private:
 		DiscoveryListener();
 		~DiscoveryListener();

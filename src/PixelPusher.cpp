@@ -2,6 +2,7 @@
 #include "PixelPusher.h"
 #include <algorithm>
 #include <ctime>
+#include <iterator>
 
 using namespace ofxPixelPusher;
 
@@ -113,7 +114,7 @@ std::shared_ptr<Strip> PixelPusher::getStrip(int stripNumber) {
 		return mStrips.at(stripNumber);
 	}
 	else {
-		std::printf("PixelPusher::getStrip ERROR -- Invalid strip number %d.  Returning empty strip.", stripNumber);
+		std::printf("PixelPusher::getStrip ERROR -- Invalid strip number %d.  Returning empty strip.\n", stripNumber);
 		return std::shared_ptr<Strip>();
 	}
 }
@@ -127,7 +128,7 @@ int PixelPusher::getPixelsPerStrip(int stripNumber) {
 		return mStrips.at(stripNumber)->getLength();
 	}
 	else {
-		std::printf("PixelPusher::getPixelsPerStrip ERROR -- Invalid strip number %d", stripNumber);
+		std::printf("PixelPusher::getPixelsPerStrip ERROR -- Invalid strip number %d.\n", stripNumber);
 		return 0;
 	}
 }
@@ -137,7 +138,7 @@ void PixelPusher::setStripValues(int stripNumber, unsigned char red, unsigned ch
 		mStrips.at(stripNumber)->setPixels(red, green, blue);
 	}
 	else {
-		std::printf("PixelPusher::setStripValues ERROR -- Invalid strip number %d", stripNumber);
+		std::printf("PixelPusher::setStripValues ERROR -- Invalid strip number %d.\n", stripNumber);
 	}
 }
 
@@ -146,7 +147,7 @@ void PixelPusher::setStripValues(int stripNumber, std::vector<std::shared_ptr<Pi
 		mStrips.at(stripNumber)->setPixels(pixels);
 	}
 	else {
-		std::printf("PixelPusher::setStripValues ERROR -- Invalid strip number %d", stripNumber);
+		std::printf("PixelPusher::setStripValues ERROR -- Invalid strip number %d.\n", stripNumber);
 	}
 }
 
@@ -161,7 +162,7 @@ void PixelPusher::setPowerScale(int stripNumber, double powerScale) {
 		mStrips.at(stripNumber)->setPowerScale(powerScale);
 	}
 	else {
-		std::printf("PixelPusher::setPowerScale ERROR -- Invalid strip number %d", stripNumber);
+		std::printf("PixelPusher::setPowerScale ERROR -- Invalid strip number %d.\n", stripNumber);
 	}
 }
 
@@ -232,14 +233,14 @@ void PixelPusher::sendPacket() {
 				//std::printf("Payload confirmed; sending packet of %d bytes", mPacket.size());
 				mPacketNumber++;
 
-				mUdpConnection->sendTo(getIpAddress(), mPort, mPacket);
+				mUdpConnection.Send(reinterpret_cast<const char*>(mPacket.data()), mPacket.size());
 				payload = false;
 				this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
 			}
 		}
 	}
 
-	std::printf("Closing Card Thread for PixelPusher %s", getMacAddress().c_str());
+	std::printf("Closing Card Thread for PixelPusher %s\n", getMacAddress().c_str());
 }
 
 void PixelPusher::setPusherFlags(long pusherFlags) {
@@ -392,13 +393,14 @@ void PixelPusher::createCardThread() {
 	mUdpConnection = std::make_shared<sdf_networking::UDPSender>();
 	mUdpConnection->connect(getIpAddress(), mPort);
 
-	std::printf("Connected to PixelPusher %s on port %d", getIpAddress().c_str(), mPort);
+	std::printf("Connected to PixelPusher %s on port %d\n", getIpAddress().c_str(), mPort);
 	mPacketNumber = 0;
 	mThreadExtraDelay = 0;
 	mCardThread = std::thread(&PixelPusher::sendPacket, this);
 }
 
 void PixelPusher::destroyCardThread() {
+	mRunCardThread = false;
 	if (mCardThread.joinable()) {
 		mCardThread.join();
 	}

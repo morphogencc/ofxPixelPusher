@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Pixel.h"
+#include "Utilities.h"
 
 using namespace ofxPixelPusher;
 
@@ -31,15 +32,6 @@ Pixel::Pixel(unsigned char r, unsigned char g, unsigned char b) {
 	mWhite = 0;
 }
 
-Pixel::Pixel(unsigned char r, unsigned char g, unsigned char b, unsigned char o, unsigned char w) {
-	mUseAntiLog = true;
-	mRed = r;
-	mGreen = g;
-	mBlue = b;
-	mOrange = o;
-	mWhite = w;
-}
-
 Pixel::~Pixel() {
 
 }
@@ -61,21 +53,9 @@ void Pixel::setColor(unsigned char r, unsigned char g, unsigned char b) {
 	}
 }
 
-void Pixel::setColor(unsigned char r, unsigned char g, unsigned char b, unsigned char o, unsigned char w) {
-	if (mUseAntiLog) {
-		mRed = mLinearExp[r];
-		mGreen = mLinearExp[g];
-		mBlue = mLinearExp[b];
-		mOrange = mLinearExp[o];
-		mWhite = mLinearExp[w];
-	}
-	else {
-		mRed = r;
-		mGreen = g;
-		mBlue = b;
-		mOrange = o;
-		mWhite = w;
-	}
+void Pixel::setColorHSB(float hue, float saturation, float brightness) {
+	ColorRGB rgbColor = hsb2rgb(hue, saturation, brightness);
+	setColor(rgbColor.mRed, rgbColor.mGreen, rgbColor.mBlue);
 }
 
 void Pixel::setColor(Pixel pixel) {

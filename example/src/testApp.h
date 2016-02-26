@@ -20,7 +20,7 @@ class testApp : public ofBaseApp{
   void gotMessage(ofMessage msg);
   void exit();
  private:
-  DiscoveryListener* mListener;
+  ofxPixelPusher::DiscoveryListener* mListener;
   int mCount;
   int mIncrement;
 };

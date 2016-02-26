@@ -16,7 +16,7 @@ namespace ofxPixelPusher {
 		unsigned char mBlue;
 	};
 
-	ColorHSB rgb2hsb(ColorRGB inputColor)
+	static ColorHSB rgb2hsb(ColorRGB inputColor)
 	{
 		ColorHSB outputColor;
 		double min, max, delta;
@@ -59,26 +59,25 @@ namespace ofxPixelPusher {
 		return outputColor;
 	}
 
+	static ColorHSB rgb2hsb(unsigned char red, unsigned char green, unsigned char blue) {
+		ColorRGB inputColor;
+		inputColor.mRed = red;
+		inputColor.mGreen = green;
+		inputColor.mBlue = blue;
 
-		ColorHSB rgb2hsb(unsigned char red, unsigned char green, unsigned char blue) {
-			ColorRGB inputColor;
-			inputColor.mRed = red;
-			inputColor.mGreen = green;
-			inputColor.mBlue = blue;
+		return rgb2hsb(inputColor);
+	}
 
-			return rgb2hsb(inputColor);
-		}
-
-	ColorRGB hsb2rgb(ColorHSB inputColor)
+	static ColorRGB hsb2rgb(ColorHSB inputColor)
 	{
 		double hh, p, q, t, ff;
 		long i;
 		ColorRGB outputColor;
 
 		if (inputColor.mSaturation <= 0.0) {
-			outputColor.mRed = inputColor.mBrightness;
-			outputColor.mGreen = inputColor.mBrightness;
-			outputColor.mBlue = inputColor.mBrightness;
+			outputColor.mRed = 255.0*inputColor.mBrightness;
+			outputColor.mGreen = 255.0*inputColor.mBrightness;
+			outputColor.mBlue = 255.0*inputColor.mBrightness;
 			return outputColor;
 		}
 
@@ -87,48 +86,49 @@ namespace ofxPixelPusher {
 		hh /= 60.0;
 		i = (long)hh;
 		ff = hh - i;
-		p = inputColor.mBrightness * (1.0 - inputColor.mSaturation);
-		q = inputColor.mBrightness * (1.0 - (inputColor.mSaturation * ff));
-		t = inputColor.mBrightness * (1.0 - (inputColor.mSaturation * (1.0 - ff)));
+		p = 255.0*inputColor.mBrightness * (1.0 - inputColor.mSaturation);
+		q = 255.0*inputColor.mBrightness * (1.0 - (inputColor.mSaturation * ff));
+		t = 255.0*inputColor.mBrightness * (1.0 - (inputColor.mSaturation * (1.0 - ff)));
 
 		switch (i) {
 		case 0:
-			outputColor.mRed = inputColor.mBrightness;
+			outputColor.mRed = 255.0*inputColor.mBrightness;
 			outputColor.mGreen = t;
 			outputColor.mBlue = p;
 			break;
 		case 1:
 			outputColor.mRed = q;
-			outputColor.mGreen = inputColor.mBrightness;
+			outputColor.mGreen = 255.0*inputColor.mBrightness;
 			outputColor.mBlue = p;
 			break;
 		case 2:
 			outputColor.mRed = p;
-			outputColor.mGreen = inputColor.mBrightness;
+			outputColor.mGreen = 255.0*inputColor.mBrightness;
 			outputColor.mBlue = t;
 			break;
 
 		case 3:
 			outputColor.mRed = p;
 			outputColor.mGreen = q;
-			outputColor.mBlue = inputColor.mBrightness;
+			outputColor.mBlue = 255.0*inputColor.mBrightness;
 			break;
 		case 4:
 			outputColor.mRed = t;
 			outputColor.mGreen = p;
-			outputColor.mBlue = inputColor.mBrightness;
+			outputColor.mBlue = 255.0*inputColor.mBrightness;
 			break;
 		case 5:
 		default:
-			outputColor.mRed = inputColor.mBrightness;
+			outputColor.mRed = 255.0*inputColor.mBrightness;
 			outputColor.mGreen = p;
 			outputColor.mBlue = q;
 			break;
 		}
+
 		return outputColor;
 	}
 
-	ColorRGB hsb2rgb(float hue, float saturation, float brightness) {
+	static ColorRGB hsb2rgb(float hue, float saturation, float brightness) {
 		ColorHSB inputColor;
 		inputColor.mHue = hue;
 		inputColor.mSaturation = saturation;
@@ -137,7 +137,7 @@ namespace ofxPixelPusher {
 		return hsb2rgb(inputColor);
 	}
 
-	float clamp(float n, float lower, float upper) {
+	static float clamp(float n, float lower, float upper) {
 		return std::max(lower, std::min(n, upper));
 	}
 

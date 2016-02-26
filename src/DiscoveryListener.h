@@ -1,11 +1,11 @@
 /*
- * DiscoveryListener
- * Aug 2014
- * nathan lachenmyer
- *
- * A class that listens for the Universal Disocvery Protocol and reports the results.
- *
- */
+* DiscoveryListener
+* Aug 2014
+* nathan lachenmyer
+*
+* A class that listens for the Universal Disocvery Protocol and reports the results.
+*
+*/
 
 #pragma once
 
@@ -30,6 +30,8 @@ namespace ofxPixelPusher {
 		std::vector<std::shared_ptr<PixelPusher> > getPushers();
 		std::vector<std::shared_ptr<PixelPusher> > getGroup(long groupId);
 		std::shared_ptr<PixelPusher> getController(long groupId, long controllerId);
+		void addRegistrationCallback(std::function<void(const std::shared_ptr<PixelPusher>)> callback_function);
+		void addRemovalCallback(std::function<void(const std::shared_ptr<PixelPusher>)> callback_function);
 		void receive();
 	private:
 		DiscoveryListener();
@@ -51,6 +53,8 @@ namespace ofxPixelPusher {
 		std::multimap<long, std::shared_ptr<PixelPusher> > mGroupMap;
 		std::thread mUpdateMapThread;
 		std::mutex mUpdateMutex;
+		std::vector<std::function<void(const std::shared_ptr<ofxPixelPusher::PixelPusher>)> > mRegistrationCallbacks; // left ofxPixelPusher:: in the function signature so users remember to include it!
+		std::vector<std::function<void(const std::shared_ptr<ofxPixelPusher::PixelPusher>)> > mRemovalCallbacks;
 	};
 
 }

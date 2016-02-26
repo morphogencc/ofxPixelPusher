@@ -1,8 +1,8 @@
 /*
- * DiscoveryListener
- * Aug 2014
- * nathan lachenmyer
- */
+* DiscoveryListener
+* Aug 2014
+* nathan lachenmyer
+*/
 #include "stdafx.h"
 
 #include <memory>
@@ -140,6 +140,9 @@ void DiscoveryListener::addNewPusher(std::string macAddress, std::shared_ptr<Pix
 	mPusherMap.insert(std::make_pair(macAddress, pusher));
 	mGroupMap.insert(std::make_pair(pusher->getGroupId(), pusher));
 	pusher->createCardThread();
+	for (auto callback : mRegistrationCallbacks) {
+		callback(pusher);
+	}
 }
 
 void DiscoveryListener::updatePusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher) {
@@ -153,6 +156,9 @@ void DiscoveryListener::updatePusherMap() {
 		for (std::map<std::string, std::shared_ptr<PixelPusher> >::iterator pusher = mPusherMap.begin(); pusher != mPusherMap.end();) {
 			//pusher->first is Mac Address, pusher->second is the shared pointer to the PixelPusher
 			if (!pusher->second->isAlive()) {
+				for (auto callback : mRemovalCallbacks) {
+					callback(pusher->second);
+				}
 				std::printf("DiscoveryListener removing PixelPusher %s from all maps.\n", pusher->first.c_str());
 				pusher->second->destroyCardThread();
 				//remove from multimap -- more complicated
@@ -175,4 +181,12 @@ void DiscoveryListener::updatePusherMap() {
 		mUpdateMutex.unlock();
 		this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
+}
+
+void DiscoveryListener::addRegistrationCallback(std::function<void(std::shared_ptr<PixelPusher>)> callback_function) {
+	mRegistrationCallbacks.push_back(callback_function);
+}
+
+void DiscoveryListener::addRemovalCallback(std::function<void(std::shared_ptr<PixelPusher>)> callback_function) {
+	mRemovalCallbacks.push_back(callback_function);
 }

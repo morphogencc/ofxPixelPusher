@@ -16,15 +16,6 @@ namespace ofxPixelPusher {
 		unsigned char mBlue;
 	};
 
-	ColorHSB rgb2hsb(unsigned char red, unsigned char green, unsigned char blue) {
-		ColorRGB inputColor;
-		inputColor.mRed = red;
-		inputColor.mGreen = green;
-		inputColor.mBlue = blue;
-
-		return rgb2hsb(inputColor);
-	}
-
 	ColorHSB rgb2hsb(ColorRGB inputColor)
 	{
 		ColorHSB outputColor;
@@ -68,13 +59,13 @@ namespace ofxPixelPusher {
 		return outputColor;
 	}
 
-	ColorRGB hsb2rgb(float hue, float saturation, float brightness) {
-		ColorHSB inputColor;
-		inputColor.mHue = hue;
-		inputColor.mSaturation = saturation;
-		inputColor.mBrightness = brightness;
-		
-		return hsb2rgb(inputColor);
+	ColorHSB rgb2hsb(unsigned char red, unsigned char green, unsigned char blue) {
+		ColorRGB inputColor;
+		inputColor.mRed = red;
+		inputColor.mGreen = green;
+		inputColor.mBlue = blue;
+
+		return rgb2hsb(inputColor);
 	}
 
 	ColorRGB hsb2rgb(ColorHSB inputColor)
@@ -134,6 +125,15 @@ namespace ofxPixelPusher {
 			break;
 		}
 		return outputColor;
+	}
+
+	ColorRGB hsb2rgb(float hue, float saturation, float brightness) {
+		ColorHSB inputColor;
+		inputColor.mHue = hue;
+		inputColor.mSaturation = saturation;
+		inputColor.mBrightness = brightness;
+
+		return hsb2rgb(inputColor);
 	}
 
 	float clamp(float n, float lower, float upper) {

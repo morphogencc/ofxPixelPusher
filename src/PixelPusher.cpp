@@ -233,7 +233,7 @@ void PixelPusher::sendPacket() {
 				//std::printf("Payload confirmed; sending packet of %d bytes", mPacket.size());
 				mPacketNumber++;
 
-				mUdpConnection.Send(reinterpret_cast<const char*>(mPacket.data()), mPacket.size());
+				mUdpConnection->send(reinterpret_cast<const char*>(mPacket.data()));
 				payload = false;
 				this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
 			}

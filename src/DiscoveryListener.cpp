@@ -97,7 +97,7 @@ void DiscoveryListener::update(sdf_networking::UDPMessage udpMessage) {
 	mUpdateMutex.lock();
 	DeviceHeader* header;
 
-	header = new DeviceHeader(reinterpret_cast<const unsigned char*> (udpMessage.c_str()), udpMessage.length());
+	header = new DeviceHeader(reinterpret_cast<const unsigned char*> (udpMessage.content.c_str()), udpMessage.content.length());
 	if (header->getDeviceType() != PIXELPUSHER) {
 		//if the device type isn't PixelPusher, end processing it right here.
 		return;

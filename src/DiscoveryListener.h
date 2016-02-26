@@ -18,6 +18,7 @@
 #include <mutex>
 #include <ctime>
 #include "PixelPusher.h"
+#include "Utilities.h"
 #include "ofxUDPManager.h"
 
 namespace ofxPixelPusher {

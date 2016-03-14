@@ -197,7 +197,7 @@ void PixelPusher::sendPacket() {
 		//std::printf("Updating total delay for PixelPusher %s to %ld", getMacAddress().c_str(), mTotalDelay);
 
 		if (!mSendReset && remainingStrips.empty()) {
-			this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
+			std::this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
 		}
 
 		while (!remainingStrips.empty()) {
@@ -212,7 +212,7 @@ void PixelPusher::sendPacket() {
 
 			for (int i = 0; i < mMaxStripsPerPacket; i++) {
 				if (remainingStrips.empty()) {
-					this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
+					std::this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
 					continue;
 				}
 
@@ -232,9 +232,10 @@ void PixelPusher::sendPacket() {
 				//std::printf("Payload confirmed; sending packet of %d bytes", mPacket.size());
 				mPacketNumber++;
 
-				mUdpConnection.Send(reinterpret_cast<const char*>(mPacket.data()), mPacket.size());
+				std::shared_ptr<ofxAsio::Packet> packet = std::make_shared<ofxAsio::Packet>(mPacket, getIpAddress(), getPort());
+				mCardThreadSender->send(packet);
 				payload = false;
-				this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
+				std::this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
 			}
 		}
 	}
@@ -389,9 +390,7 @@ void PixelPusher::createStrips() {
 void PixelPusher::createCardThread() {
 	createStrips();
 
-	mUdpConnection.Create();
-	mUdpConnection.Connect(getIpAddress().c_str(), mPort);
-	mUdpConnection.SetNonBlocking(true);
+	mCardThreadSender = std::make_shared<ofxAsio::UdpSender>();
 
 	std::printf("Connected to PixelPusher %s on port %d\n", getIpAddress().c_str(), mPort);
 	mPacketNumber = 0;

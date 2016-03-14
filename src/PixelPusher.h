@@ -17,7 +17,7 @@
 #include <chrono>
 #include "Strip.h"
 #include "DeviceHeader.h"
-#include "ofxUDPManager.h"
+#include "ofxAsio.h"
 
 namespace ofxPixelPusher {
 
@@ -64,7 +64,6 @@ namespace ofxPixelPusher {
 		void sendPacket();
 		static const int mTimeoutTime = 5;
 		static const int mFrameLimit = 60;
-		ofxUDPManager mUdpConnection;
 		long mPusherFlags;
 		DeviceHeader* mDeviceHeader;
 		long mPacketNumber;
@@ -94,6 +93,7 @@ namespace ofxPixelPusher {
 		long mTotalDelay;
 		bool mRunCardThread;
 		std::thread mCardThread;
+		std::shared_ptr<ofxAsio::UdpSender> mCardThreadSender;
 		std::vector<unsigned char> mStripFlags;
 		std::deque<std::shared_ptr<Strip> > mStrips;
 	};

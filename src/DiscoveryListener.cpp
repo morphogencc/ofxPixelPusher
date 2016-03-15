@@ -10,18 +10,13 @@
 
 using namespace ofxPixelPusher;
 
-DiscoveryListener* DiscoveryListener::mDiscoveryService = NULL;
+std::shared_ptr<DiscoveryListener> DiscoveryListener::mDiscoveryService = nullptr;
 
-DiscoveryListener* DiscoveryListener::getInstance() {
-	if (mDiscoveryService == NULL) {
-		mDiscoveryService = new DiscoveryListener();
+std::shared_ptr<DiscoveryListener> DiscoveryListener::getInstance() {
+	if (mDiscoveryService == nullptr) {
+		mDiscoveryService = std::shared_ptr<DiscoveryListener>(new DiscoveryListener());
 	}
 	return mDiscoveryService;
-}
-
-void DiscoveryListener::freeInstance() {
-	delete mDiscoveryService;
-	mDiscoveryService = NULL;
 }
 
 int DiscoveryListener::getFrameLimit() {
@@ -69,9 +64,11 @@ std::shared_ptr<PixelPusher> DiscoveryListener::getController(long groupId, long
 }
 
 DiscoveryListener::DiscoveryListener() {
-	mDiscoveryServiceSocket.Create();
-	mDiscoveryServiceSocket.BindMcast("0.0.0.0", mPort);
-	mDiscoveryServiceSocket.SetNonBlocking(true);
+	mDiscoveryServiceSocket = std::make_shared<ofxAsio::UdpReceiver>("0.0.0.0", 7331);
+	mDiscoveryServiceSocket->addOnReceiveFn([=](std::shared_ptr<ofxAsio::Message> datagram) {
+		DiscoveryListener::getInstance()->update(datagram->getMessage());
+	});
+	mDiscoveryServiceSocket->start();
 	std::printf("Starting Discovery Listener Service...\n");
 
 	mAutoThrottle = true;
@@ -83,16 +80,6 @@ DiscoveryListener::DiscoveryListener() {
 DiscoveryListener::~DiscoveryListener() {
 	if (mUpdateMapThread.joinable()) {
 		mUpdateMapThread.join();
-	}
-}
-
-void DiscoveryListener::receive() {
-	char udpMessage[84];
-	int bytesReceived = mDiscoveryServiceSocket.Receive(udpMessage, 84);
-	std::string msg = std::string(udpMessage);
-	std::printf("Received %d bytes", bytesReceived);
-	if (bytesReceived > 0) {
-		DiscoveryListener::getInstance()->update(msg);
 	}
 }
 
@@ -177,7 +164,7 @@ void DiscoveryListener::updatePusherMap() {
 			}
 		}
 		mUpdateMutex.unlock();
-		this_thread::sleep_for(std::chrono::milliseconds(1000));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
 }
 

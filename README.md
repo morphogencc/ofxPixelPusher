@@ -2,13 +2,13 @@
 
 A C++ implementation of pixelpusher software.
 
-NOTE: This codebase currently does not function; it is fully functional except for a network library.  I'm currently working on using asio to provide the network functionality, though if someone beats me to it I'll take whatever I can get.
-
 ## Requirements
-This implementation of the pixelpusher protocol attempts to be as framework-agnostic as possible; thus, it tries to avoid using openFrameworks-specific classes such as `ofLog` and `ofThread`, instead using the c++ equivalents.
+This add-on requires [ofxAsio](http://github.com/morphogencc/ofxAsio.git) for networking.  See the repository for how to setup `ofxAsio`.
+
+This implementation of the pixelpusher protocol attempts to be as framework-agnostic as possible; thus, it tries to avoid using openFrameworks-specific classes such as `ofLog` and `ofThread`, instead using the c++ equivalents.  `ofxAsio` follows a similar paradigm, so the entire project should be portable to any other C++ framework.
 
 ## Usage
-In your application, create a `DiscoveryListener` instance using `DiscoveryListener::getInstance()`.  This creates a
+In your application, create a `std::shared_ptr<DiscoveryListener>` instance using `DiscoveryListener::getInstance()`.  This creates a
 separate thread that looks for PixelPusher announcements, and registers the PixelPushers with the Listener.
 
 Once a PixelPusher is detected, you can grab one with any of the three following methods:
@@ -39,9 +39,9 @@ you can set the pixels with one of four methods:
 Each `PixelPusher` object automatically creates its own `CardThread` object manages sending data to the PixelPusher on
 its own thread.  As long as you update the strips to reflect current data, everything else should run itself!
 
-## Useful Abstractions
-
 ## Examples
+
+* `example-colorFade`
 
 ## Contributions
 This project uses the [Git Flow](http://nvie.com/posts/a-successful-git-branching-model/) paradigm.  Before contributing, please make your own feature branch with your changes.

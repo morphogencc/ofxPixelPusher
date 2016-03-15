@@ -65,7 +65,7 @@ std::shared_ptr<PixelPusher> DiscoveryListener::getController(long groupId, long
 
 DiscoveryListener::DiscoveryListener() {
 	mDiscoveryServiceSocket = std::make_shared<ofxAsio::UdpReceiver>("0.0.0.0", 7331);
-	mDiscoveryServiceSocket->addOnReceiveFn([=](std::shared_ptr<ofxAsio::Datagram> datagram) {
+	mDiscoveryServiceSocket->addOnReceiveFn([=](std::shared_ptr<ofxAsio::Message> datagram) {
 		DiscoveryListener::getInstance()->update(datagram->getMessage());
 	});
 	mDiscoveryServiceSocket->start();

@@ -232,7 +232,7 @@ void PixelPusher::sendPacket() {
 				//std::printf("Payload confirmed; sending packet of %d bytes", mPacket.size());
 				mPacketNumber++;
 
-				std::shared_ptr<ofxAsio::Packet> packet = std::make_shared<ofxAsio::Packet>(mPacket, getIpAddress(), getPort());
+				std::shared_ptr<ofxAsio::Datagram> packet = std::make_shared<ofxAsio::Datagram>(mPacket, getIpAddress(), getPort());
 				mCardThreadSender->send(packet);
 				payload = false;
 				std::this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));

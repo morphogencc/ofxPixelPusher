@@ -2,7 +2,11 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofSetWindowTitle("ofxPixelPusher -- example-colorChase");
 	mDiscoveryService = ofxPixelPusher::DiscoveryListener::getInstance();
+	mDiscoveryService->addRegistrationCallback([=](std::shared_ptr<ofxPixelPusher::PixelPusher> pusher) {
+		pusher->setPowerScale(0.5);
+	});
 	mStartingHue = 0;
 }
 

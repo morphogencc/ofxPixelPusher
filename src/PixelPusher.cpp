@@ -25,6 +25,7 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
 	mThreadExtraDelay = 0;
 	mTotalDelay = 0;
 	mRunCardThread = NULL;
+	mLogLevel = PRODUCTION;
 
 	mMulticast = false;
 	mMulticastPrimary = false;

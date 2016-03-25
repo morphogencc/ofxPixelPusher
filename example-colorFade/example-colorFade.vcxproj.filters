@@ -25,9 +25,6 @@
     <ClCompile Include="..\..\..\addons\ofxPixelPusher\src\DeviceHeader.cpp">
       <Filter>addons\ofxPixelPusher\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxPixelPusher\src\DiscoveryListener.cpp">
-      <Filter>addons\ofxPixelPusher\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxPixelPusher\src\Pixel.cpp">
       <Filter>addons\ofxPixelPusher\src</Filter>
     </ClCompile>
@@ -35,6 +32,9 @@
       <Filter>addons\ofxPixelPusher\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxPixelPusher\src\Strip.cpp">
+      <Filter>addons\ofxPixelPusher\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DiscoveryService.cpp">
       <Filter>addons\ofxPixelPusher\src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,9 +86,6 @@
     <ClInclude Include="..\..\..\addons\ofxPixelPusher\src\DeviceHeader.h">
       <Filter>addons\ofxPixelPusher\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxPixelPusher\src\DiscoveryListener.h">
-      <Filter>addons\ofxPixelPusher\src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxPixelPusher\src\Pixel.h">
       <Filter>addons\ofxPixelPusher\src</Filter>
     </ClInclude>
@@ -99,6 +96,9 @@
       <Filter>addons\ofxPixelPusher\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxPixelPusher\src\Utilities.h">
+      <Filter>addons\ofxPixelPusher\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DiscoveryService.h">
       <Filter>addons\ofxPixelPusher\src</Filter>
     </ClInclude>
   </ItemGroup>

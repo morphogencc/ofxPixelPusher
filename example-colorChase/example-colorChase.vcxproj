@@ -178,7 +178,7 @@
     <ClCompile Include="..\..\..\addons\ofxAsio\src\UdpSender.cpp" />
     <ClCompile Include="..\..\..\addons\ofxAsio\src\UdpSocket.cpp" />
     <ClCompile Include="..\..\..\addons\ofxPixelPusher\src\DeviceHeader.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxPixelPusher\src\DiscoveryListener.cpp" />
+    <ClCompile Include="..\src\DiscoveryService.cpp" />
     <ClCompile Include="..\..\..\addons\ofxPixelPusher\src\Pixel.cpp" />
     <ClCompile Include="..\..\..\addons\ofxPixelPusher\src\PixelPusher.cpp" />
     <ClCompile Include="..\..\..\addons\ofxPixelPusher\src\Strip.cpp" />
@@ -192,7 +192,7 @@
     <ClInclude Include="..\..\..\addons\ofxAsio\src\UdpSender.h" />
     <ClInclude Include="..\..\..\addons\ofxAsio\src\UdpSocket.h" />
     <ClInclude Include="..\..\..\addons\ofxPixelPusher\src\DeviceHeader.h" />
-    <ClInclude Include="..\..\..\addons\ofxPixelPusher\src\DiscoveryListener.h" />
+    <ClInclude Include="..\src\DiscoveryService.h" />
     <ClInclude Include="..\..\..\addons\ofxPixelPusher\src\Pixel.h" />
     <ClInclude Include="..\..\..\addons\ofxPixelPusher\src\PixelPusher.h" />
     <ClInclude Include="..\..\..\addons\ofxPixelPusher\src\Strip.h" />

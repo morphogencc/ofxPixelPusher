@@ -1,5 +1,5 @@
 /*
- * DiscoveryListener
+ * DiscoveryService
  * Aug 2014
  * nathan lachenmyer
  *
@@ -23,23 +23,27 @@
 
 namespace ofxPixelPusher {
 
-	class DiscoveryListener {
+	class DiscoveryService {
 	public:
-		~DiscoveryListener();
-		static std::shared_ptr<DiscoveryListener> getInstance();
+		~DiscoveryService();
+		static std::shared_ptr<DiscoveryService> getInstance();
 		int getFrameLimit();
 		std::vector<std::shared_ptr<PixelPusher> > getPushers();
 		std::vector<std::shared_ptr<PixelPusher> > getGroup(long groupId);
 		std::shared_ptr<PixelPusher> getController(long groupId, long controllerId);
+		void setLogLevel(LogLevel log_level);
+		LogLevel getLogLevel();
+		void setPowerScale(double power_scale);
+		double getPowerScale();
 		void addRegistrationCallback(std::function<void(std::shared_ptr<PixelPusher>)> callback_function);
 		void addRemovalCallback(std::function<void(std::shared_ptr<PixelPusher>)> callback_function);
 	private:
-		DiscoveryListener();
+		DiscoveryService();
 		void update(std::string udpMessage);
 		void addNewPusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
 		void updatePusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
 		void updatePusherMap();
-		static std::shared_ptr<DiscoveryListener> mDiscoveryService;
+		static std::shared_ptr<DiscoveryService> mDiscoveryService;
 		std::shared_ptr<ofxAsio::UdpReceiver> mDiscoveryServiceSocket;
 		int mMessageFlag;
 		static const int mIncomingPacketSize = 76;
@@ -47,6 +51,8 @@ namespace ofxPixelPusher {
 		bool mAutoThrottle;
 		bool mRunUpdateMapThread;
 		int mFrameLimit;
+		double mPowerScale;
+		LogLevel mLogLevel;
 		std::map<std::string, std::shared_ptr<PixelPusher> > mPusherMap;
 		std::map<std::string, long> mLastSeenMap;
 		std::multimap<long, std::shared_ptr<PixelPusher> > mGroupMap;

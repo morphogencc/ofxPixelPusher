@@ -2,8 +2,11 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	mDiscoveryService = ofxPixelPusher::DiscoveryListener::getInstance();
-
+	ofSetWindowTitle("ofxPixelPusher -- example-colorFade");
+	mDiscoveryService = ofxPixelPusher::DiscoveryService::getInstance();
+	mDiscoveryService->addRegistrationCallback([=](std::shared_ptr<ofxPixelPusher::PixelPusher> pusher) {
+		pusher->setPowerScale(0.5);
+	});
 }
 
 //--------------------------------------------------------------

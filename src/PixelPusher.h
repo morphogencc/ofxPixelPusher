@@ -21,6 +21,11 @@
 
 namespace ofxPixelPusher {
 
+	enum LogLevel {
+		PRODUCTION,
+		DEBUG
+	};
+
 	class PixelPusher {
 	public:
 		PixelPusher(DeviceHeader* header);
@@ -58,6 +63,8 @@ namespace ofxPixelPusher {
 		bool isAlive();
 		void createCardThread();
 		void destroyCardThread();
+		void setLogLevel(LogLevel log_level);
+		LogLevel getLogLevel();
 	protected:
 		void createStrips();
 		void addStrip(std::shared_ptr<Strip> strip);
@@ -92,6 +99,7 @@ namespace ofxPixelPusher {
 		long mThreadExtraDelay;
 		long mTotalDelay;
 		bool mRunCardThread;
+		LogLevel mLogLevel;
 		std::thread mCardThread;
 		std::shared_ptr<ofxAsio::UdpSender> mCardThreadSender;
 		std::vector<unsigned char> mStripFlags;

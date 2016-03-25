@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "DiscoveryListener.h"
+#include "DiscoveryService.h"
 class ofApp : public ofBaseApp{
 
 	public:
@@ -21,7 +21,7 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		std::shared_ptr<ofxPixelPusher::DiscoveryListener> mDiscoveryService;
+		std::shared_ptr<ofxPixelPusher::DiscoveryService> mDiscoveryService;
 		int hueCounter;
 		
 };

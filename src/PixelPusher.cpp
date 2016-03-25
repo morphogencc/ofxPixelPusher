@@ -240,7 +240,9 @@ void PixelPusher::sendPacket() {
 		}
 	}
 
-	std::printf("Closing Card Thread for PixelPusher %s\n", getMacAddress().c_str());
+	if (mLogLevel == DEBUG) {
+		std::printf("Closing Card Thread for PixelPusher %s\n", getMacAddress().c_str());
+	}
 }
 
 void PixelPusher::setPusherFlags(long pusherFlags) {
@@ -391,8 +393,9 @@ void PixelPusher::createCardThread() {
 	createStrips();
 
 	mCardThreadSender = std::make_shared<ofxAsio::UdpSender>();
-
-	std::printf("Connected to PixelPusher %s on port %d\n", getIpAddress().c_str(), mPort);
+	if (mLogLevel == DEBUG) {
+		std::printf("Connected to PixelPusher %s on port %d\n", getIpAddress().c_str(), mPort);
+	}
 	mPacketNumber = 0;
 	mThreadExtraDelay = 0;
 	mCardThread = std::thread(&PixelPusher::sendPacket, this);
@@ -403,4 +406,12 @@ void PixelPusher::destroyCardThread() {
 	if (mCardThread.joinable()) {
 		mCardThread.join();
 	}
+}
+
+void PixelPusher::setLogLevel(LogLevel log_level) {
+	mLogLevel = log_level;
+}
+
+LogLevel PixelPusher::getLogLevel() {
+	return mLogLevel;
 }

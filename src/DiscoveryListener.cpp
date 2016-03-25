@@ -63,6 +63,29 @@ std::shared_ptr<PixelPusher> DiscoveryListener::getController(long groupId, long
 	return nullPtr;
 }
 
+void DiscoveryListener::setLogLevel(LogLevel log_level) {
+	mLogLevel = log_level;
+	addRegistrationCallback([=](std::shared_ptr<PixelPusher> pusher) {
+		pusher->setLogLevel(mLogLevel);
+	});
+}
+
+LogLevel DiscoveryListener::getLogLevel() {
+	return mLogLevel;
+}
+
+void DiscoveryListener::setPowerScale(double power_scale) {
+	mPowerScale = power_scale;
+	addRegistrationCallback([=](std::shared_ptr<PixelPusher> pusher) {
+		pusher->setPowerScale(mPowerScale);
+	});
+}
+
+double DiscoveryListener::getPowerScale() {
+	return mPowerScale;
+}
+
+
 DiscoveryListener::DiscoveryListener() {
 	mDiscoveryServiceSocket = std::make_shared<ofxAsio::UdpReceiver>("0.0.0.0", 7331);
 	mDiscoveryServiceSocket->addOnReceiveFn([=](std::shared_ptr<ofxAsio::Datagram> datagram) {
@@ -73,7 +96,7 @@ DiscoveryListener::DiscoveryListener() {
 
 	mAutoThrottle = true;
 	mFrameLimit = 60;
-
+	mLogLevel = PRODUCTION;
 	mUpdateMapThread = std::thread(&DiscoveryListener::updatePusherMap, this);
 }
 
@@ -84,7 +107,9 @@ DiscoveryListener::~DiscoveryListener() {
 }
 
 void DiscoveryListener::update(std::string udpMessage) {
-	std::printf("Updating registry...\n");
+	if (mLogLevel == DEBUG) {
+		std::printf("Updating registry...\n");
+	}
 	mUpdateMutex.lock();
 	DeviceHeader* header;
 
@@ -109,12 +134,16 @@ void DiscoveryListener::update(std::string udpMessage) {
 		if (!mPusherMap[macAddress]->isEqual(incomingDevice)) {
 			//if the pushers are not equal, replace it with this one
 			updatePusher(macAddress, incomingDevice);
-			std::printf("Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
+			if (mLogLevel == DEBUG) {
+				std::printf("Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
+			}
 		}
 		else {
 			//if they're the same, then just update it
 			mPusherMap[macAddress]->updateVariables(incomingDevice);
-			std::printf("Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
+			if (mLogLevel == DEBUG) {
+				std::printf("Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
+			}
 			if (incomingDevice->getDeltaSequence() > 3) {
 				mPusherMap[macAddress]->increaseExtraDelay(5);
 			}

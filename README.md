@@ -8,14 +8,14 @@ This add-on requires [ofxAsio](http://github.com/morphogencc/ofxAsio.git) for ne
 This implementation of the pixelpusher protocol attempts to be as framework-agnostic as possible; thus, it tries to avoid using openFrameworks-specific classes such as `ofLog` and `ofThread`, instead using the c++ equivalents.  `ofxAsio` follows a similar paradigm, so the entire project should be portable to any other C++ framework.
 
 ## Usage
-In your application, create a `std::shared_ptr<DiscoveryListener>` instance using `DiscoveryListener::getInstance()`.  This creates a
-separate thread that looks for PixelPusher announcements, and registers the PixelPushers with the Listener.
+In your application, create a `std::shared_ptr<DiscoveryService>` instance using `DiscoveryService::getInstance()`.  This creates a
+separate thread that looks for PixelPusher announcements, and registers the PixelPushers with the Service.
 
 Once a PixelPusher is detected, you can grab one with any of the three following methods:
 
-- `DiscoveryListener::getPushers()`
-- `DiscoveryListener::getGroup(long groupId)`
-- `DiscoveryListener::getController(long groupId, long controllerId)`
+- `DiscoveryService::getPushers()`
+- `DiscoveryService::getGroup(long groupId)`
+- `DiscoveryServiceit::getController(long groupId, long controllerId)`
 
 The first two methods return a vector of shared pointers (`std::vector<shared_ptr<PixelPusher> >`), while the last one
 returns either an empty pointer or a pointer to a PixelPusher.

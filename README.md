@@ -43,6 +43,7 @@ its own thread.  As long as you update the strips to reflect current data, every
 
 * `example-colorFade` -- sets all known pixels to the same color, slowly cycling through hues.
 * `example-colorChase` -- sets all strips to a classic rainbow chase sequence.
+
 ## Contributions
 This project uses the [Git Flow](http://nvie.com/posts/a-successful-git-branching-model/) paradigm.  Before contributing, please make your own feature branch with your changes.
 

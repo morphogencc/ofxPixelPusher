@@ -48,6 +48,7 @@ std::vector<std::shared_ptr<PixelPusher> > DiscoveryService::getGroup(long group
 }
 
 std::shared_ptr<PixelPusher> DiscoveryService::getController(long groupId, long controllerId) {
+	//only returns the FIRST pixelpusher with a particular group / controller number combination!
 	mUpdateMutex.lock();
 	for (std::map<long, std::shared_ptr<PixelPusher> >::iterator it = mGroupMap.lower_bound(groupId);
 	it != mGroupMap.upper_bound(groupId);
@@ -92,7 +93,7 @@ DiscoveryService::DiscoveryService() {
 		DiscoveryService::getInstance()->update(datagram->getDataAsString());
 	});
 	mDiscoveryServiceSocket->start();
-	std::printf("Starting PixelPusher Discovery Service...\n");
+	std::printf("DiscoveryService::DiscoveryService -- Starting PixelPusher Discovery Service...\n");
 
 	mAutoThrottle = true;
 	mFrameLimit = 60;
@@ -108,7 +109,7 @@ DiscoveryService::~DiscoveryService() {
 
 void DiscoveryService::update(std::string udpMessage) {
 	if (mLogLevel == DEBUG) {
-		std::printf("Updating registry...\n");
+		std::printf("DiscoveryService::update -- Updating registry...\n");
 	}
 	mUpdateMutex.lock();
 	DeviceHeader* header;
@@ -127,7 +128,7 @@ void DiscoveryService::update(std::string udpMessage) {
 	if (mPusherMap.count(macAddress) == 0) {
 		//does not already exist in the map
 		addNewPusher(macAddress, incomingDevice);
-		std::printf("Adding new PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
+		std::printf("DiscoveryService::update -- Adding new PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
 	}
 	else {
 		//already exists in the map
@@ -135,14 +136,14 @@ void DiscoveryService::update(std::string udpMessage) {
 			//if the pushers are not equal, replace it with this one
 			updatePusher(macAddress, incomingDevice);
 			if (mLogLevel == DEBUG) {
-				std::printf("Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
+				std::printf("DiscoveryService::update -- Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
 			}
 		}
 		else {
 			//if they're the same, then just update it
 			mPusherMap[macAddress]->updateVariables(incomingDevice);
 			if (mLogLevel == DEBUG) {
-				std::printf("Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
+				std::printf("DiscoveryService::update -- Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
 			}
 			if (incomingDevice->getDeltaSequence() > 3) {
 				mPusherMap[macAddress]->increaseExtraDelay(5);
@@ -173,7 +174,7 @@ void DiscoveryService::updatePusherMap() {
 		for (std::map<std::string, std::shared_ptr<PixelPusher> >::iterator pusher = mPusherMap.begin(); pusher != mPusherMap.end();) {
 			//pusher->first is Mac Address, pusher->second is the shared pointer to the PixelPusher
 			if (!pusher->second->isAlive()) {
-				std::printf("DiscoveryService removing PixelPusher %s from all maps.\n", pusher->first.c_str());
+				std::printf("DiscoveryService::updatePusherMap -- Removing PixelPusher %s from all maps.\n", pusher->first.c_str());
 				pusher->second->destroyCardThread();
 				//remove from multimap -- more complicated
 				for (auto it = mGroupMap.lower_bound(pusher->second->getGroupId()); it != mGroupMap.end();) {

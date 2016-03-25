@@ -195,14 +195,18 @@ void PixelPusher::sendPacket() {
 
 		mTotalDelay = mThreadDelay + mThreadExtraDelay + mExtraDelayMsec;
 
-		//std::printf("Updating total delay for PixelPusher %s to %ld", getMacAddress().c_str(), mTotalDelay);
+		if (mLogLevel == DEBUG) {
+			std::printf("PixelPusher::sendPacket -- Updating total delay for PixelPusher %s to %ld", getMacAddress().c_str(), mTotalDelay);
+		}
 
 		if (!mSendReset && remainingStrips.empty()) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
 		}
 
 		while (!remainingStrips.empty()) {
-			//std::printf("Sending data to PixelPusher %s at %s:%d", getMacAddress().c_str(), getIpAddress().c_str(), mPort);
+			if (mLogLevel == DEBUG) {
+				std::printf("PixelPusher::sendPacket -- Sending data to PixelPusher %s at %s:%d", getMacAddress().c_str(), getIpAddress().c_str(), mPort);
+			}
 			payload = false;
 			mPacket.clear();
 
@@ -230,7 +234,9 @@ void PixelPusher::sendPacket() {
 			}
 
 			if (payload) {
-				//std::printf("Payload confirmed; sending packet of %d bytes", mPacket.size());
+				if (mLogLevel == DEBUG) {
+					std::printf("PixelPusher::sendPacket -- Payload confirmed; sending packet of %d bytes", mPacket.size());
+				}
 				mPacketNumber++;
 
 				std::shared_ptr<ofxAsio::Datagram> packet = std::make_shared<ofxAsio::Datagram>(mPacket, getIpAddress(), getPort());
@@ -242,7 +248,7 @@ void PixelPusher::sendPacket() {
 	}
 
 	if (mLogLevel == DEBUG) {
-		std::printf("Closing Card Thread for PixelPusher %s\n", getMacAddress().c_str());
+		std::printf("PixelPusher::sendPacket -- Closing Card Thread for PixelPusher %s\n", getMacAddress().c_str());
 	}
 }
 
@@ -340,8 +346,6 @@ bool PixelPusher::isEqual(std::shared_ptr<PixelPusher> pusher) {
 		return false;
 	}
 
-	//include check for color of strips
-
 	if (getNumberOfStrips() != pusher->getNumberOfStrips()) {
 		return false;
 	}
@@ -395,7 +399,7 @@ void PixelPusher::createCardThread() {
 
 	mCardThreadSender = std::make_shared<ofxAsio::UdpSender>();
 	if (mLogLevel == DEBUG) {
-		std::printf("Connected to PixelPusher %s on port %d\n", getIpAddress().c_str(), mPort);
+		std::printf("PixelPusher::createCardThread -- Connected to PixelPusher %s on port %d\n", getIpAddress().c_str(), mPort);
 	}
 	mPacketNumber = 0;
 	mThreadExtraDelay = 0;

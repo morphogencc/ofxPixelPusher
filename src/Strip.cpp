@@ -97,7 +97,7 @@ void Strip::setPowerScale(double powerscale) {
 		mPowerScale = powerscale;
 	}
 	else {
-		std::printf("Strip::setPowerScale -- power scale set out of bounds (0, 1).  Please set the power scale between 0 and 1!\n");
+		std::printf("Strip::setPowerScale ERROR -- power scale set out of bounds (0, 1).  Please set the power scale between 0 and 1!\n");
 	}
 }
 

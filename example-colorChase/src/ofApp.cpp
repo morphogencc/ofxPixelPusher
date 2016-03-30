@@ -21,7 +21,7 @@ void ofApp::update(){
 			mIndex = 0;
 		}
 	}
-	mStartingHue++;
+	mStartingHue ++;
 	mStartingHue = mStartingHue % 360;
 }
 

@@ -224,7 +224,7 @@ void PixelPusher::sendPacket() {
 				std::shared_ptr<Strip> strip = remainingStrips.front();
 				strip->serialize();
 				short stripNumber = strip->getStripNumber();
-				mPacket.push_back((stripNumber >> 8) & 0xFF);
+				//mPacket.push_back((stripNumber >> 8) & 0xFF);
 				mPacket.push_back(stripNumber & 0xFF);
 
 				std::copy(strip->begin(), strip->end(), std::back_inserter(mPacket));

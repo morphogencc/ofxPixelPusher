@@ -118,6 +118,15 @@ int Strip::getPixelDataLength() {
 	return mPixelData.size();
 }
 
+void Strip::setId(int id) {
+	mId = id;
+}
+
+int Strip::getId() {
+	return mId;
+}
+
+
 std::vector<unsigned char>::iterator Strip::begin() {
 	return mPixelData.begin();
 }

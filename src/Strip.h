@@ -37,12 +37,15 @@ namespace ofxPixelPusher {
 		void serialize();
 		unsigned char* getPixelData(); //remove
 		int getPixelDataLength(); //remove
+		void setId(int id);
+		int getId();
 		std::vector<unsigned char>::iterator begin();
 		std::vector<unsigned char>::iterator end();
 	protected:
 		std::vector<std::shared_ptr<Pixel> > mPixels;
 		std::vector<unsigned char> mPixelData;
 		short mStripNumber;
+		int mId;
 		bool mTouched;
 		bool mIsRGBOW;
 		double mPowerScale;

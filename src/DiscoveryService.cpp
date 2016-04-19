@@ -23,6 +23,15 @@ int DiscoveryService::getFrameLimit() {
 	return mFrameLimit;
 }
 
+std::shared_ptr<PixelPusher> DiscoveryService::getPusher(int controllerId) {
+	for (auto pusherItem : mPusherMap) {
+		if (pusherItem.second->getControllerId() == controllerId) {
+			return pusherItem.second;
+		}
+	}
+	return nullptr;
+}
+
 std::vector<std::shared_ptr<PixelPusher> > DiscoveryService::getPushers() {
 	mUpdateMutex.lock();
 	std::vector<std::shared_ptr<PixelPusher> > pusherVector;

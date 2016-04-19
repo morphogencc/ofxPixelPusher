@@ -28,6 +28,7 @@ namespace ofxPixelPusher {
 		~DiscoveryService();
 		static std::shared_ptr<DiscoveryService> getInstance();
 		int getFrameLimit();
+		std::shared_ptr<PixelPusher> getPusher(int controllerId);
 		std::vector<std::shared_ptr<PixelPusher> > getPushers();
 		std::vector<std::shared_ptr<PixelPusher> > getGroup(long groupId);
 		std::shared_ptr<PixelPusher> getController(long groupId, long controllerId);

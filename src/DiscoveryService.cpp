@@ -170,6 +170,9 @@ void DiscoveryService::addNewPusher(std::string macAddress, std::shared_ptr<Pixe
 	mPusherMap.insert(std::make_pair(macAddress, pusher));
 	mGroupMap.insert(std::make_pair(pusher->getGroupId(), pusher));
 	pusher->createCardThread();
+	for (auto callback : mRegistrationCallbacks) {
+		callback(pusher);
+	}
 }
 
 void DiscoveryService::updatePusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher) {
@@ -183,6 +186,9 @@ void DiscoveryService::updatePusherMap() {
 		for (std::map<std::string, std::shared_ptr<PixelPusher> >::iterator pusher = mPusherMap.begin(); pusher != mPusherMap.end();) {
 			//pusher->first is Mac Address, pusher->second is the shared pointer to the PixelPusher
 			if (!pusher->second->isAlive()) {
+				for (auto callback : mRemovalCallbacks) {
+					callback(pusher->second);
+				}
 				std::printf("DiscoveryService::updatePusherMap -- Removing PixelPusher %s from all maps.\n", pusher->first.c_str());
 				pusher->second->destroyCardThread();
 				//remove from multimap -- more complicated

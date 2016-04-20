@@ -36,13 +36,14 @@ you can set the pixels with one of four methods:
 - `setPixels(unsigned char r, unsigned char g, unsigned char b)`
 - `setPixels(std::vector<shared_ptr<Pixel> > p)`
 
-Each `PixelPusher` object automatically creates its own `CardThread` object manages sending data to the PixelPusher on
+Each `PixelPusher` object automatically creates its own `CardThread` that manages sending data to the PixelPusher on
 its own thread.  As long as you update the strips to reflect current data, everything else should run itself!
 
 ## Examples
 
 * `example-colorFade` -- sets all known pixels to the same color, slowly cycling through hues.
 * `example-colorChase` -- sets all strips to a classic rainbow chase sequence.
+* `example-tileMapping` -- shows how to use map strips using textures, using a TwentySquared tile as an example.
 
 ## Contributions
 This project uses the [Git Flow](http://nvie.com/posts/a-successful-git-branching-model/) paradigm.  Before contributing, please make your own feature branch with your changes.

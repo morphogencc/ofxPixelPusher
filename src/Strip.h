@@ -13,7 +13,10 @@
 #include "Pixel.h"
 
 namespace ofxPixelPusher {
-
+	enum StripType {
+		STRIP,
+		TWENTYSQUARED
+	};
 	class Strip {
 	public:
 		Strip(short stripNumber, int length);
@@ -41,6 +44,8 @@ namespace ofxPixelPusher {
 		void serialize();
 		void setID(int id);
 		int getID();
+		void setStripType(StripType type);
+		StripType getStripType();
 		std::vector<unsigned char>::iterator begin();
 		std::vector<unsigned char>::iterator end();
 	protected:
@@ -52,6 +57,7 @@ namespace ofxPixelPusher {
 		bool mIsRGBOW;
 		double mPowerScale;
 		int mID;
+		StripType mStripType;
 		int mTexWidth;
 		int mTexHeight;
 		int mTexDepth;

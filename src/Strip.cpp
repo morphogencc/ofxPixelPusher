@@ -19,6 +19,7 @@ Strip::Strip(short stripNumber, int length) {
 
 	mPowerScale = 1.0;
 	mID = NULL;
+	mStripType = STRIP;
 
 	resetTexture();
 }
@@ -101,7 +102,14 @@ void Strip::setPixelsFromTex() {
 			for (int y = 0; y < mSubTexHeight; y++) {
 				for (int x = 0; x < mSubTexWidth; x++) {
 					for (int d = 0; d < mTexDepth; d++) {
-						subTexSrc[y*mSubTexWidth*mTexDepth + x*mTexDepth + d] = mTexSrc[(mSubTexY + y)*mTexWidth*mTexDepth + (mSubTexX + x)*mTexDepth + d];
+						if (y % 2 == 0) {
+							// even row
+							subTexSrc[y*mSubTexWidth*mTexDepth + x*mTexDepth + d] = mTexSrc[(mSubTexY + y)*mTexWidth*mTexDepth + (mSubTexX + x)*mTexDepth + d];
+						}
+						else {
+							// even row
+							subTexSrc[y*mSubTexWidth*mTexDepth + (mSubTexWidth - x)*mTexDepth + d] = mTexSrc[(mSubTexY + y)*mTexWidth*mTexDepth + (mSubTexX + x)*mTexDepth + d];
+						}
 					}
 				}
 			}
@@ -165,6 +173,17 @@ int Strip::getID() {
 	return mID;
 }
 
+void Strip::setStripType(StripType type) {
+	if (type == StripType::TWENTYSQUARED && mPixels.size() < 400) {
+		std::printf("Strip::setStriPType ERROR -- not enough pixels for this strip to be set as a TwentySquared tile.  Please check your PixelPusher's pixel.rc file.\n");
+	}
+	mStripType = type;
+}
+
+StripType Strip::getStripType() {
+	return mStripType;
+}
+
 void Strip::setTexture(unsigned char* source, int width, int height, int depth) {
 	if (width * height < mPixels.size()) {
 		std::printf("Strip::setTexture ERROR -- not enough pixels in texture to map to physical pixels.  Please use a larger texture.\n");
@@ -204,7 +223,7 @@ void Strip::setTexCoords(float lower_x, float lower_y, float upper_x, float uppe
 	mSubTexHeight = (upper_y - lower_y)*mTexHeight + 1;
 
 	if (mSubTexWidth*mSubTexHeight < mPixels.size()) {
-		std::printf("Strip::setPixelsFromTex ERROR -- not enough pixels in subtexture to map to physical pixels.  Please set new texture coordinates.\n");
+		std::printf("Strip::setTexCoords ERROR -- not enough pixels in subtexture to map to physical pixels.  Please set new texture coordinates.\n");
 		return;
 	}
 
@@ -212,8 +231,39 @@ void Strip::setTexCoords(float lower_x, float lower_y, float upper_x, float uppe
 }
 
 void Strip::scrapeTexture(unsigned char* source, int width, int height, int depth) {
-	int partition = (width*height) / (float)mPixels.size();
-	for (int i = 0; i < mPixels.size(); i++) {
-		mPixels[i]->setColor(source[partition*i*depth], source[partition*i*depth + 1], source[partition*i*depth + 2]);
+	int stride_x;
+	int stride_y;
+
+	switch(mStripType) {
+	case STRIP:
+		//evenly distribute pixels along length of strip
+		stride_x = (width*height) / (float)mPixels.size();
+		for (int i = 0; i < mPixels.size(); i++) {
+			mPixels[i]->setColor(source[stride_x*i*depth + 0], source[stride_x*i*depth + 1], source[stride_x*i*depth + 2]);
+		}
+		break;
+	case TWENTYSQUARED:
+		//evenly distribute pixels across x and y
+		stride_x = int(width / 20.0);
+		stride_y = int(height / 20.0);
+		for (int j = 0; j < 20; j++) {
+			for (int i = 0; i < 20; i++) {
+				if (j % 2 == 0) {
+					//even row
+					int index = i + 20 * j;
+					int source_pixel = i*stride_x + j*stride_y*width;
+					setPixel(index, source[source_pixel*depth + 0], source[source_pixel*depth + 1], source[source_pixel*depth + 2]);
+				}
+				else {
+					//odd row
+					// FIX THIS
+					int index = 20 * (j+1) - (i+1);
+					int source_pixel = i*stride_x + j*stride_y*width;
+					setPixel(index, source[source_pixel*depth + 0], source[source_pixel*depth + 1], source[source_pixel*depth + 2]);
+				}
+			}
+		}
+		break;
 	}
+	
 }

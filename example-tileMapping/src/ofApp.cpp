@@ -8,28 +8,34 @@ void ofApp::setup(){
 	mFbo.readToPixels(mPixels);
 	mDiscoveryService->setPowerScale(0.01);
 	mDiscoveryService->addRegistrationCallback([=](std::shared_ptr<ofxPixelPusher::PixelPusher> pusher) {
+		// whenever a strip is registered, set it to be a TwentySquared tile, set the tile to get its data from the data in mPixels, and set it to only use the middle chunk of the image
 		for (auto strip : pusher->getStrips()) {
+			strip->setStripType(ofxPixelPusher::StripType::TWENTYSQUARED);
 			strip->setTexture(mPixels.getData(), mFbo.getWidth(), mFbo.getHeight(), 3);
+			strip->setTexCoords(0.25, 0.25, 0.75, 0.75);
 		}
 	});
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){
+void ofApp::update() {
+	// draw some random stuff to an FBO
 	mFbo.begin();
 	ofBackground(0);
 	ofSetLineWidth(5.0);
 	ofSetColor(0, 255, 0);
-	//ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
-	ofDrawLine(0, ofGetFrameNum() % ofGetHeight(), ofGetWidth(), (ofGetFrameNum() + int(ofGetHeight() / 2.0)) % ofGetHeight());
+	ofDrawLine(0, 2 * ofGetFrameNum() % ofGetHeight(), ofGetWidth(), 2 * ofGetFrameNum() % ofGetHeight());
+	ofDrawLine(ofGetFrameNum() % ofGetWidth(), 0, ofGetFrameNum() % ofGetWidth(), ofGetHeight());
+	ofDrawLine(0, ofGetFrameNum() % ofGetHeight(), ofGetWidth(), (ofGetFrameNum() + int(0.25*ofGetHeight())) % ofGetHeight());
+	ofDrawCircle(ofGetMouseX(), ofGetMouseY(), 15, 15);
 	mFbo.end();
 
+	// Read the FBO to our pixel array; when registered, the strip has a pointer to this array holding the image data.
 	mFbo.readToPixels(mPixels);
 
+	// for each strip, set pixels from the texture it is pointed to.
 	for (auto pusher : mDiscoveryService->getPushers()) {
 		for (auto strip : pusher->getStrips()) {
-			strip->setTexture(mPixels.getData(), mFbo.getWidth(), mFbo.getHeight(), 3);
-			strip->setTexCoords(0, 0.5, 1, 0.5);
 			strip->setPixelsFromTex();
 		}
 	}

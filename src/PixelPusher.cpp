@@ -166,6 +166,18 @@ void PixelPusher::setPowerScale(int stripNumber, double powerScale) {
 	}
 }
 
+void PixelPusher::setColorTemperature(Pixel::ColorTemperature temperature) {
+	for (auto strip : mStrips) {
+		strip->setColorTemperature(temperature);
+	}
+}
+
+void PixelPusher::setColorCorrection(Pixel::ColorCorrection correction) {
+	for (auto strip : mStrips) {
+		strip->setColorCorrection(correction);
+	}
+}
+
 std::string PixelPusher::getMacAddress() {
 	return mDeviceHeader->getMacAddressString();
 }

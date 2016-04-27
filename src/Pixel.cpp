@@ -20,6 +20,8 @@ Pixel::Pixel() {
 	mBlue = 0;
 	mOrange = 0;
 	mWhite = 0;
+	setColorCorrection(ColorCorrection::UNCORRECTED);
+	setColorTemperature(ColorTemperature::UNCORRECTED_TEMPERATURE);
 }
 
 Pixel::Pixel(unsigned char r, unsigned char g, unsigned char b) {
@@ -29,6 +31,8 @@ Pixel::Pixel(unsigned char r, unsigned char g, unsigned char b) {
 	mBlue = b;
 	mOrange = 0;
 	mWhite = 0;
+	setColorCorrection(ColorCorrection::UNCORRECTED);
+	setColorTemperature(ColorTemperature::UNCORRECTED_TEMPERATURE);
 }
 
 Pixel::~Pixel() {
@@ -37,16 +41,16 @@ Pixel::~Pixel() {
 
 void Pixel::setColor(unsigned char r, unsigned char g, unsigned char b) {
 	if (mUseAntiLog) {
-		mRed = mLinearExp[r];
-		mGreen = mLinearExp[g];
-		mBlue = mLinearExp[b];
+		mRed = mCorrection[0] * mLinearExp[r];
+		mGreen = mCorrection[1] * mLinearExp[g];
+		mBlue = mCorrection[2] * mLinearExp[b];
 		mOrange = 0;
 		mWhite = 0;
 	}
 	else {
-		mRed = r;
-		mGreen = g;
-		mBlue = b;
+		mRed = mCorrection[0] * r;
+		mGreen = mCorrection[1] * g;
+		mBlue = mCorrection[2] * b;
 		mOrange = 0;
 		mWhite = 0;
 	}
@@ -67,4 +71,20 @@ void Pixel::setColor(Pixel pixel) {
 
 void Pixel::setAntiLog(bool useAntiLog) {
 	mUseAntiLog = useAntiLog;
+}
+
+void Pixel::setColorCorrection(ColorCorrection correction) {
+	mColorCorrection = correction;
+	calculateCorrection();
+}
+
+void Pixel::setColorTemperature(ColorTemperature temperature) {
+	mColorTemperature = temperature;
+	calculateCorrection();
+}
+
+void Pixel::calculateCorrection() {
+	mCorrection[0] = float((((mColorCorrection >> 16) & 0xFF)) * (((mColorTemperature >> 16) & 0xFF))) / 65535;
+	mCorrection[1] = float((((mColorCorrection >> 8) & 0xFF)) * (((mColorTemperature >> 8) & 0xFF))) / 65535;
+	mCorrection[2] = float((((mColorCorrection >> 0) & 0xFF)) * (((mColorTemperature >> 0) & 0xFF))) / 65535;
 }

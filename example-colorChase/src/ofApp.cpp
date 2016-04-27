@@ -5,7 +5,9 @@ void ofApp::setup(){
 	ofSetWindowTitle("ofxPixelPusher -- example-colorChase");
 	mDiscoveryService = ofxPixelPusher::DiscoveryService::getInstance();
 	mDiscoveryService->addRegistrationCallback([=](std::shared_ptr<ofxPixelPusher::PixelPusher> pusher) {
-		pusher->setPowerScale(0.5);
+		pusher->setPowerScale(1.0);
+		pusher->setColorCorrection(ofxPixelPusher::Pixel::SMD5050);
+		pusher->setColorTemperature(ofxPixelPusher::Pixel::CANDLE);
 	});
 	mStartingHue = 0;
 }
@@ -15,7 +17,7 @@ void ofApp::update(){
 	for (auto pusher : mDiscoveryService->getPushers()) {
 		for (auto strip : pusher->getStrips()) {
 			while (mIndex < strip->getNumberOfPixels()) {
-				strip->setPixelHSB(mIndex, (mStartingHue + mIndex) % 360, 1.0, 1.0);
+				strip->setPixelHSB(mIndex, (mStartingHue + mIndex) % 360, 0.0, 1.0);
 				mIndex++;
 			}
 			mIndex = 0;

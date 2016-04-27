@@ -140,11 +140,23 @@ int Strip::getNumberOfPixels() {
 }
 
 void Strip::setPowerScale(double powerscale) {
-	if (powerscale < 1.0 && powerscale > 0.0) {
+	if (powerscale <= 1.0 && powerscale > 0.0) {
 		mPowerScale = powerscale;
 	}
 	else {
 		std::printf("Strip::setPowerScale -- power scale set out of bounds (0, 1).  Please set the power scale between 0 and 1!\n");
+	}
+}
+
+void Strip::setColorTemperature(Pixel::ColorTemperature temperature) {
+	for (auto pixel : mPixels) {
+		pixel->setColorTemperature(temperature);
+	}
+}
+
+void Strip::setColorCorrection(Pixel::ColorCorrection correction) {
+	for (auto pixel : mPixels) {
+		pixel->setColorCorrection(correction);
 	}
 }
 

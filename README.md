@@ -29,15 +29,17 @@ of `Pixel` objects directly to the `Strip` objects.  See the header file `Strip.
 
 Alternatively, you can call `getStrips()` on a `PixelPusher` object to get a deque of strips that you can iterate
 through, or `getStrip(int stripNumber)` to get a pointer to a particular strip.  Once you have a pointer to a `Strip`,
-you can set the pixels with one of four methods:
-
-- `setPixel(int position, unsigned char r, unsigned char g, unsigned char b)`
-- `setPixel(int position, shared_ptr<Pixel> pixel)`
-- `setPixels(unsigned char r, unsigned char g, unsigned char b)`
-- `setPixels(std::vector<shared_ptr<Pixel> > p)`
+you can set the pixels with a variety of methods -- look at the header file to see a complete listing.
 
 Each `PixelPusher` object automatically creates its own `CardThread` that manages sending data to the PixelPusher on
 its own thread.  As long as you update the strips to reflect current data, everything else should run itself!
+
+## Options
+There are a variety of options that can be used to adjust the LEDs.  Currently implemented are:
+
+* `PowerScale` -- this controls the overall brightness of the LEDs; use a value between 0 and 1.
+* `ColorCorrection` -- this corrects the color ratios so that the tuple `(255, 255, 255)` produces a "true" white pixel. Look at `Pixel.h` for a full listing of options.
+* `ColorTemperature` -- this further corrects the colors to reflect a specific light source.  Look at `Pixel.h` for a full listing.
 
 ## Examples
 

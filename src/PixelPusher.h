@@ -40,6 +40,8 @@ namespace ofxPixelPusher {
 		void setStripValues(int stripNumber, std::vector<std::shared_ptr<Pixel> > pixels);
 		void setPowerScale(double powerscale);
 		void setPowerScale(int stripNumber, double powerscale);
+		void setColorTemperature(Pixel::ColorTemperature temperature);
+		void setColorCorrection(Pixel::ColorCorrection correction);
 		std::string getMacAddress();
 		std::string getIpAddress();
 		long getGroupId();

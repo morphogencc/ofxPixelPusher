@@ -6,6 +6,8 @@ void ofApp::setup(){
 	mDiscoveryService = ofxPixelPusher::DiscoveryService::getInstance();
 	mDiscoveryService->addRegistrationCallback([=](std::shared_ptr<ofxPixelPusher::PixelPusher> pusher) {
 		pusher->setPowerScale(0.5);
+		pusher->setColorCorrection(ofxPixelPusher::Pixel::SMD5050);
+		pusher->setColorTemperature(ofxPixelPusher::Pixel::UNCORRECTED_TEMPERATURE);
 	});
 }
 

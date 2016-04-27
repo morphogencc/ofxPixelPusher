@@ -8,6 +8,8 @@ void ofApp::setup(){
 	mFbo.readToPixels(mPixels);
 	mDiscoveryService->setPowerScale(0.01);
 	mDiscoveryService->addRegistrationCallback([=](std::shared_ptr<ofxPixelPusher::PixelPusher> pusher) {
+		pusher->setColorCorrection(ofxPixelPusher::Pixel::SMD5050);
+		pusher->setColorTemperature(ofxPixelPusher::Pixel::UNCORRECTED_TEMPERATURE);
 		// whenever a strip is registered, set it to be a TwentySquared tile, set the tile to get its data from the data in mPixels, and set it to only use the middle chunk of the image
 		for (auto strip : pusher->getStrips()) {
 			strip->setStripType(ofxPixelPusher::StripType::TWENTYSQUARED);

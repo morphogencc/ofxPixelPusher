@@ -6,7 +6,6 @@
  */
 
 #pragma once
-#include <cstdlib>
 
 namespace ofxPixelPusher {
 
@@ -46,7 +45,7 @@ namespace ofxPixelPusher {
 		void setColor(unsigned char r, unsigned char g, unsigned char b, unsigned char o, unsigned char w);
 		void setColor(Pixel pixel);
 		void setAntiLog(bool useAntiLog);
-		void setManualCorrection(uint32_t correction);
+		void setManualCorrection(float red, float green, float blue);
 		void setColorTemperature(ColorTemperature temperature);
 		void setColorCorrection(ColorCorrection correction);
 	protected:

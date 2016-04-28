@@ -148,12 +148,19 @@ void Strip::setPowerScale(double powerscale) {
 	}
 }
 
-void Strip::setTint(uint32_t tint) {
+void Strip::setTint(unsigned char red, unsigned char green, unsigned char blue) {
 	for (auto pixel : mPixels) {
-		pixel->setManualCorrection(tint);
+		pixel->setManualCorrection(red / 255.0, green / 255.0, blue / 255.0);
 	}
+
 }
 
+void Strip::setTint(float red, float green, float blue) {
+	for (auto pixel : mPixels) {
+		pixel->setManualCorrection(red, green, blue);
+	}
+
+}
 
 void Strip::setColorTemperature(Pixel::ColorTemperature temperature) {
 	for (auto pixel : mPixels) {

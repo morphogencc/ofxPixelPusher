@@ -73,10 +73,15 @@ void Pixel::setAntiLog(bool useAntiLog) {
 	mUseAntiLog = useAntiLog;
 }
 
-void Pixel::setManualCorrection(uint32_t correction) {
-	mCorrection[0] = float((((correction >> 16) & 0xFF)) * (mCorrection[0])) / 65535;
-	mCorrection[1] = float((((correction >> 8) & 0xFF)) * (mCorrection[1])) / 65535;
-	mCorrection[2] = float((((correction >> 0) & 0xFF)) * (mCorrection[2])) / 65535;
+void Pixel::setManualCorrection(float red, float green, float blue) {
+	if (red < 1.0 && green < 1.0 && blue < 1.0 && red > 0.0 && green > 0.0 && blue > 0.0) {
+		mCorrection[0] *= red;
+		mCorrection[1] *= green;
+		mCorrection[2] *= blue;
+	}
+	else {
+		std::printf("Pixel::setManualCorrection -- corrective values must be between 0.0 and 1.0!\n");
+	}
 }
 
 

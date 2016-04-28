@@ -148,6 +148,13 @@ void Strip::setPowerScale(double powerscale) {
 	}
 }
 
+void Strip::setTint(uint32_t tint) {
+	for (auto pixel : mPixels) {
+		pixel->setManualCorrection(tint);
+	}
+}
+
+
 void Strip::setColorTemperature(Pixel::ColorTemperature temperature) {
 	for (auto pixel : mPixels) {
 		pixel->setColorTemperature(temperature);

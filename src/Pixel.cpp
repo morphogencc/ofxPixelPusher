@@ -39,6 +39,26 @@ Pixel::~Pixel() {
 
 }
 
+unsigned char Pixel::getRed() {
+	return mRed;
+}
+
+unsigned char Pixel::getGreen() {
+	return mGreen;
+}
+
+unsigned char Pixel::getBlue() {
+	return mBlue;
+}
+
+ColorRGB Pixel::getColor() {
+	ColorRGB color;
+	color.mRed = mRed;
+	color.mGreen = mGreen;
+	color.mBlue = mBlue;
+	return color;
+}
+
 void Pixel::setColor(unsigned char r, unsigned char g, unsigned char b) {
 	if (mUseAntiLog) {
 		mRed = mCorrection[0] * mLinearExp[r];
@@ -72,6 +92,13 @@ void Pixel::setColor(Pixel pixel) {
 void Pixel::setAntiLog(bool useAntiLog) {
 	mUseAntiLog = useAntiLog;
 }
+
+void Pixel::setManualCorrection(uint32_t correction) {
+	mCorrection[0] = float((((correction >> 16) & 0xFF)) * (mCorrection[0])) / 65535;
+	mCorrection[1] = float((((correction >> 8) & 0xFF)) * (mCorrection[1])) / 65535;
+	mCorrection[2] = float((((correction >> 0) & 0xFF)) * (mCorrection[2])) / 65535;
+}
+
 
 void Pixel::setColorCorrection(ColorCorrection correction) {
 	mColorCorrection = correction;

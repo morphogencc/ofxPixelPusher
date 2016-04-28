@@ -41,6 +41,7 @@ namespace ofxPixelPusher {
 		std::vector<std::shared_ptr<Pixel> > getPixels();
 		int getNumberOfPixels();
 		void setPowerScale(double powerscale);
+		void setTint(uint32_t tint);
 		void setColorTemperature(Pixel::ColorTemperature temperature);
 		void setColorCorrection(Pixel::ColorCorrection correction);
 		void serialize();

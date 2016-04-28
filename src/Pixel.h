@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#include <cstdlib>
 
 namespace ofxPixelPusher {
 
@@ -13,7 +14,6 @@ namespace ofxPixelPusher {
 	class Strip; 
 
 	class Pixel {
-		friend class Strip;
 	public:
 		enum ColorCorrection {
 			UNCORRECTED = 0xFFFFFF,
@@ -39,11 +39,16 @@ namespace ofxPixelPusher {
 		Pixel(unsigned char r, unsigned char g, unsigned char b);
 		Pixel(unsigned char r, unsigned char g, unsigned char b, unsigned char o, unsigned char w);
 		~Pixel();
+		unsigned char getRed();
+		unsigned char getGreen();
+		unsigned char getBlue();
+		ColorRGB getColor();
 		void setColor(unsigned char r, unsigned char g, unsigned char b);
 		void setColorHSB(float hue, float saturation, float brightness);
 		void setColor(unsigned char r, unsigned char g, unsigned char b, unsigned char o, unsigned char w);
 		void setColor(Pixel pixel);
 		void setAntiLog(bool useAntiLog);
+		void setManualCorrection(uint32_t correction);
 		void setColorTemperature(ColorTemperature temperature);
 		void setColorCorrection(ColorCorrection correction);
 	protected:

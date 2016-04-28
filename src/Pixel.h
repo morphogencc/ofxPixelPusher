@@ -15,6 +15,8 @@ namespace ofxPixelPusher {
 
 	class Pixel {
 	public:
+		friend class Strip;
+
 		enum ColorCorrection {
 			UNCORRECTED = 0xFFFFFF,
 			SMD5050 = 0xFFB0F0,
@@ -39,10 +41,6 @@ namespace ofxPixelPusher {
 		Pixel(unsigned char r, unsigned char g, unsigned char b);
 		Pixel(unsigned char r, unsigned char g, unsigned char b, unsigned char o, unsigned char w);
 		~Pixel();
-		unsigned char getRed();
-		unsigned char getGreen();
-		unsigned char getBlue();
-		ColorRGB getColor();
 		void setColor(unsigned char r, unsigned char g, unsigned char b);
 		void setColorHSB(float hue, float saturation, float brightness);
 		void setColor(unsigned char r, unsigned char g, unsigned char b, unsigned char o, unsigned char w);

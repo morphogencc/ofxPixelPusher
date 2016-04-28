@@ -39,26 +39,6 @@ Pixel::~Pixel() {
 
 }
 
-unsigned char Pixel::getRed() {
-	return mRed;
-}
-
-unsigned char Pixel::getGreen() {
-	return mGreen;
-}
-
-unsigned char Pixel::getBlue() {
-	return mBlue;
-}
-
-ColorRGB Pixel::getColor() {
-	ColorRGB color;
-	color.mRed = mRed;
-	color.mGreen = mGreen;
-	color.mBlue = mBlue;
-	return color;
-}
-
 void Pixel::setColor(unsigned char r, unsigned char g, unsigned char b) {
 	if (mUseAntiLog) {
 		mRed = mCorrection[0] * mLinearExp[r];

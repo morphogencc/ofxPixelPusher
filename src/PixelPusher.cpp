@@ -178,6 +178,14 @@ void PixelPusher::setColorCorrection(Pixel::ColorCorrection correction) {
 	}
 }
 
+void PixelPusher::setAntilog(bool antilog) {
+	for (auto strip : mStrips) {
+		for (auto pixel : strip->getPixels()) {
+			pixel->setAntiLog(antilog);
+		}
+	}
+}
+
 std::string PixelPusher::getMacAddress() {
 	return mDeviceHeader->getMacAddressString();
 }

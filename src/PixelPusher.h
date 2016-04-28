@@ -42,6 +42,7 @@ namespace ofxPixelPusher {
 		void setPowerScale(int stripNumber, double powerscale);
 		void setColorTemperature(Pixel::ColorTemperature temperature);
 		void setColorCorrection(Pixel::ColorCorrection correction);
+		void setAntilog(bool antilog);
 		std::string getMacAddress();
 		std::string getIpAddress();
 		long getGroupId();

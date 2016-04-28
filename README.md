@@ -40,6 +40,8 @@ There are a variety of options that can be used to adjust the LEDs.  Currently i
 * `PowerScale` -- this controls the overall brightness of the LEDs; use a value between 0 and 1.
 * `ColorCorrection` -- this corrects the color ratios so that the tuple `(255, 255, 255)` produces a "true" white pixel. Look at `Pixel.h` for a full listing of options.
 * `ColorTemperature` -- this further corrects the colors to reflect a specific light source.  Look at `Pixel.h` for a full listing.
+* `Tint` -- you can also "tint" a strip by using the corresponding function call.  This effectively multiples the assigned color (set via `setPixels()`) by a constant tint -- this allows you to either manually correct the color to a setting non available with the presets, or allow for some neat tricks in animating the strips.
+
 
 ## Examples
 
@@ -52,10 +54,12 @@ This project uses the [Git Flow](http://nvie.com/posts/a-successful-git-branchin
 
 This project was originally developed at [Small Design Firm](http://www.smalldesignfirm.com/), before being open sourced on Github.
 
-## More Information
+## More Information / Credits
 For more info about PixelPusher visit:
 - [Heroic Robotics](http://www.heroicrobotics.com)
 - [PixelPusher Documentation](https://sites.google.com/a/heroicrobot.com/pixelpusher/home)
 
 To purchase a PixelPusher (and BetterPixel products), go to:
 - [Illumination Supply](http://www.illuminationsupply.com/)
+
+Color Correction and Color Temperature presets were lifted straight from the [FastLED](https://github.com/FastLED/FastLED/) library.

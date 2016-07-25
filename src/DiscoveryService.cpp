@@ -97,7 +97,7 @@ double DiscoveryService::getPowerScale() {
 
 
 DiscoveryService::DiscoveryService() {
-	mDiscoveryServiceSocket = std::make_shared<ofxAsio::UdpReceiver>("0.0.0.0", 7331);
+	mDiscoveryServiceSocket = ofxAsio::UdpReceiver::make("0.0.0.0", 7331);
 	mDiscoveryServiceSocket->addOnReceiveFn([=](std::shared_ptr<ofxAsio::Datagram> datagram) {
 		DiscoveryService::getInstance()->update(datagram->getDataAsString());
 	});

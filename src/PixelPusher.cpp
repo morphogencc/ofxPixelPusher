@@ -417,7 +417,7 @@ void PixelPusher::createStrips() {
 void PixelPusher::createCardThread() {
 	createStrips();
 
-	mCardThreadSender = std::make_shared<ofxAsio::UdpSender>();
+	mCardThreadSender = ofxAsio::UdpSender::make();
 	if (mLogLevel == DEBUG) {
 		std::printf("PixelPusher::createCardThread -- Connected to PixelPusher %s on port %d\n", getIpAddress().c_str(), mPort);
 	}

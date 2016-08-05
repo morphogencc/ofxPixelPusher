@@ -26,6 +26,8 @@ namespace ofxPixelPusher {
 		int getLength();
 		bool isTouched();
 		short getStripNumber();
+		void setPixels(unsigned char w);
+		void setPixel(int position, unsigned char w);
 		void setPixels(unsigned char r, unsigned char g, unsigned char b);
 		void setPixelsHSB(float hue, float saturation, float brightness);
 		//void setPixels(unsigned char r, unsigned char g, unsigned char b, unsigned char o, unsigned char w);
@@ -48,6 +50,8 @@ namespace ofxPixelPusher {
 		void serialize();
 		void setID(int id);
 		int getID();
+		void setAntilog(bool antilog);
+		void setIsMonochrome(bool monochrome);
 		void setStripType(StripType type);
 		StripType getStripType();
 		std::vector<unsigned char>::iterator begin();
@@ -59,6 +63,7 @@ namespace ofxPixelPusher {
 		short mStripNumber;
 		bool mTouched;
 		bool mIsRGBOW;
+		bool mIsMonochrome;
 		double mPowerScale;
 		int mID;
 		StripType mStripType;

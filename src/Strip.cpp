@@ -16,6 +16,7 @@ Strip::Strip(short stripNumber, int length) {
 	mStripNumber = stripNumber;
 	mTouched = false;
 	mIsRGBOW = false;
+	mIsMonochrome = false;
 
 	mPowerScale = 1.0;
 	mID = NULL;
@@ -38,6 +39,24 @@ bool Strip::isTouched() {
 short Strip::getStripNumber() {
 	return mStripNumber;
 }
+
+void Strip::setPixels(unsigned char w) {
+	for (int i = 0; i < mPixels.size(); i++) {
+		mPixels[i]->setColor(w);
+	}
+	mTouched = true;
+}
+
+void Strip::setPixel(int position, unsigned char w) {
+	if (position < mPixels.size()) {
+		mPixels[position]->setColor(w);
+		mTouched = true;
+	}
+	else {
+		std::printf("Strip::setPixel ERROR -- Invalid pixel number %d.\n", position);
+	}
+}
+
 
 void Strip::setPixels(unsigned char r, unsigned char g, unsigned char b) {
 	for (int i = 0; i < mPixels.size(); i++) {
@@ -175,10 +194,17 @@ void Strip::setColorCorrection(Pixel::ColorCorrection correction) {
 }
 
 void Strip::serialize() {
-	for (int i = 0; i < mPixels.size(); i++) {
-		mPixelData[3 * i + 0] = (unsigned char)(mPixels[i]->mRed * mPowerScale);
-		mPixelData[3 * i + 1] = (unsigned char)(mPixels[i]->mGreen * mPowerScale);
-		mPixelData[3 * i + 2] = (unsigned char)(mPixels[i]->mBlue * mPowerScale);
+	if (mIsMonochrome) {
+		for (int i = 0; i < mPixels.size(); i++) {
+			mPixelData[i] = (unsigned char)(mPixels[i]->mWhite * mPowerScale);
+		}
+	}
+	else {
+		for (int i = 0; i < mPixels.size(); i++) {
+			mPixelData[3 * i + 0] = (unsigned char)(mPixels[i]->mRed * mPowerScale);
+			mPixelData[3 * i + 1] = (unsigned char)(mPixels[i]->mGreen * mPowerScale);
+			mPixelData[3 * i + 2] = (unsigned char)(mPixels[i]->mBlue * mPowerScale);
+		}
 	}
 	mTouched = false;
 }
@@ -197,6 +223,45 @@ void Strip::setID(int id) {
 
 int Strip::getID() {
 	return mID;
+}
+
+void Strip::setAntilog(bool antilog) {
+	for (auto pixel : mPixels) {
+		pixel->setAntiLog(antilog);
+	}
+}
+
+void Strip::setIsMonochrome(bool monochrome) {
+	if (monochrome != mIsMonochrome) {
+		// we are changing the value of monochrome
+		if (monochrome) {
+			// if we are switching *to* monochrome strips
+			int length = mPixels.size();
+
+			mPixelData.clear();
+			mPixelData.reserve(length);
+			for (int i = 0; i < length; i++) {
+				mPixelData.push_back(0);
+			}
+
+			mIsMonochrome = monochrome;
+			mTouched = true;
+			return;
+		}
+		else {
+			int length = mPixels.size();
+
+			mPixelData.clear();
+			mPixelData.reserve(3*length);
+			for (int i = 0; i < 3*length; i++) {
+				mPixelData.push_back(0);
+			}
+
+			mIsMonochrome = monochrome;
+			mTouched = true;
+			return;
+		}
+	}
 }
 
 void Strip::setStripType(StripType type) {

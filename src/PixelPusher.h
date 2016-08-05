@@ -43,6 +43,7 @@ namespace ofxPixelPusher {
 		void setColorTemperature(Pixel::ColorTemperature temperature);
 		void setColorCorrection(Pixel::ColorCorrection correction);
 		void setAntilog(bool antilog);
+		bool IsAntilog();
 		std::string getMacAddress();
 		std::string getIpAddress();
 		long getGroupId();
@@ -93,6 +94,7 @@ namespace ofxPixelPusher {
 		bool mMulticast;
 		bool mMulticastPrimary;
 		bool mAutothrottle;
+		bool mIsAntilog;
 		long mSegments;
 		long mPowerDomain;
 		double mLastPingAt;
@@ -107,6 +109,20 @@ namespace ofxPixelPusher {
 		std::shared_ptr<ofxAsio::UdpSender> mCardThreadSender;
 		std::vector<unsigned char> mStripFlags;
 		std::deque<std::shared_ptr<Strip> > mStrips;
+
+		static const int SFLAG_RGBOW = 1;
+		//static const int SFLAG_WIDEPIXELS = (1 << 1);
+		static const int SFLAG_LOGARITHMIC = (1 << 2);
+		//static const int SFLAG_MOTION = (1 << 3);
+		//static const int SFLAG_NOTIDEMPOTENT = (1 << 4);
+		//static const int SFLAG_BRIGHTNESS = (1 << 5);
+		static const int SFLAG_MONOCHROME = (1 << 5);
+
+		static const int PFLAG_PROTECTED = (1 << 0);
+		static const int PFLAG_FIXEDSIZE = (1 << 1);
+		static const int PFLAG_GLOBALBRIGHTNESS = (1 << 2);
+		static const int PFLAG_STRIPBRIGHTNESS = (1 << 3);
+		static const int PFLAG_MONOCHROME_NOT_PACKED = (1 << 4);
 	};
 
 }

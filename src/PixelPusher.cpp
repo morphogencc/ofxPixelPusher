@@ -27,6 +27,7 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
 	mRunCardThread = NULL;
 	mLogLevel = PRODUCTION;
 
+	mIsAntilog = true;
 	mMulticast = false;
 	mMulticastPrimary = false;
 	mAutothrottle = false;
@@ -59,26 +60,31 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
 	else {
 		mPort = 9897;
 	}
+
 	short defaultNumberOfStrips = 8;
 	short stripFlagSize = std::max(mStripsAttached, defaultNumberOfStrips);
 	mStripFlags.resize(stripFlagSize);
+	mStripFlags.clear();
 
 	if (packetLength > 30 && header->getSoftwareRevision() > 108) {
-		memcpy(&mStripFlags[0], &packetRemainder.get()[30], stripFlagSize);
+		for (int i = 0; i < stripFlagSize; i++) {
+			mStripFlags.push_back(packetRemainder.get()[32 + i]);
+		}
+		//memcpy(mStripFlags.data(), &packetRemainder.get()[30], stripFlagSize);
 	}
 	else {
 		for (int i = 0; i < stripFlagSize; i++) {
-			mStripFlags[i] = 0;
+			mStripFlags.push_back(0x00);
 		}
 	}
 
-	if (packetLength > 30 + stripFlagSize && header->getSoftwareRevision() > 108) {
+	if (packetLength > 32 + stripFlagSize && header->getSoftwareRevision() > 108) {
 		// set Pusher flags
 		long pusherFlags;
-		memcpy(&pusherFlags, &packetRemainder.get()[32 + stripFlagSize], 4);
+		memcpy(&pusherFlags, &packetRemainder.get()[34 + stripFlagSize], 4);
 		setPusherFlags(pusherFlags);
-		memcpy(&mSegments, &packetRemainder.get()[36 + stripFlagSize], 4);
-		memcpy(&mPowerDomain, &packetRemainder.get()[40 + stripFlagSize], 4);
+		memcpy(&mSegments, &packetRemainder.get()[38 + stripFlagSize], 4);
+		memcpy(&mPowerDomain, &packetRemainder.get()[42 + stripFlagSize], 4);
 	}
 
 	mPacket.reserve(400 * mMaxStripsPerPacket); //too high, can be reduced
@@ -184,6 +190,11 @@ void PixelPusher::setAntilog(bool antilog) {
 			pixel->setAntiLog(antilog);
 		}
 	}
+	mIsAntilog = antilog;
+}
+
+bool PixelPusher::IsAntilog() {
+	return mIsAntilog;
 }
 
 std::string PixelPusher::getMacAddress() {
@@ -411,6 +422,39 @@ void PixelPusher::createStrips() {
 	for (int i = 0; i < mStripsAttached; i++) {
 		std::shared_ptr<Strip> newStrip(new Strip(i, mPixelsPerStrip));
 		mStrips.push_back(newStrip);
+		if ((mStripFlags[newStrip->getStripNumber()] & SFLAG_LOGARITHMIC) != 0) {
+			newStrip->setAntilog(false);
+		}
+		else {
+			newStrip->setAntilog(mIsAntilog);
+		}
+		/*
+		if ((mStripFlags[newStrip->getStripNumber()] & SFLAG_MOTION) != 0) {
+			newStrip->setMotion(true);
+		}
+		else {
+			newStrip->setMotion(false);
+		}
+		if ((mStripFlags[newStrip->getStripNumber()] & SFLAG_NOTIDEMPOTENT) != 0) {
+			newStrip->setNotIdempotent(true);
+		}
+		else {
+			newStrip->setNotIdempotent(false);
+		}
+		if ((mStripFlags[newStrip->getStripNumber()] & SFLAG_BRIGHTNESS) != 0) {
+			newStrip->setHasBrightness(true);
+		}
+		else {
+			newStrip->setHasBrightness(false);
+		}
+		*/
+		if ((mStripFlags[newStrip->getStripNumber()] && SFLAG_MONOCHROME) != 0) {
+			newStrip->setIsMonochrome(true);
+		}
+		else {
+			newStrip->setIsMonochrome(false);
+		}
+		//newStrip->setRGBOW((mStripFlags[newStrip->getStripNumber()] & SFLAG_RGBOW) == 1);
 	}
 }
 

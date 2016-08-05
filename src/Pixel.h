@@ -40,6 +40,7 @@ namespace ofxPixelPusher {
 		Pixel(unsigned char r, unsigned char g, unsigned char b);
 		Pixel(unsigned char r, unsigned char g, unsigned char b, unsigned char o, unsigned char w);
 		~Pixel();
+		void setColor(unsigned char w);
 		void setColor(unsigned char r, unsigned char g, unsigned char b);
 		void setColorHSB(float hue, float saturation, float brightness);
 		void setColor(unsigned char r, unsigned char g, unsigned char b, unsigned char o, unsigned char w);

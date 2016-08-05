@@ -39,6 +39,16 @@ Pixel::~Pixel() {
 
 }
 
+void Pixel::setColor(unsigned char w) {
+	if (mUseAntiLog) {
+		mWhite = mLinearExp[w];
+	}
+	else {
+		mWhite = w;
+	}
+
+}
+
 void Pixel::setColor(unsigned char r, unsigned char g, unsigned char b) {
 	if (mUseAntiLog) {
 		mRed = mCorrection[0] * mLinearExp[r];

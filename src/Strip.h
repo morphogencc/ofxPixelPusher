@@ -13,10 +13,12 @@
 #include "Pixel.h"
 
 namespace ofxPixelPusher {
+
 	enum StripType {
 		STRIP,
 		TWENTYSQUARED
 	};
+
 	class Strip {
 	public:
 		Strip(short stripNumber, int length);
@@ -72,5 +74,4 @@ namespace ofxPixelPusher {
 		int mSubTexHeight;
 		bool mUseTexCoords;
 	};
-
 }

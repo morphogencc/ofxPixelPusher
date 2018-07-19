@@ -201,7 +201,7 @@ int Strip::getID() {
 
 void Strip::setStripType(StripType type) {
 	if (type == StripType::TWENTYSQUARED && mPixels.size() < 400) {
-		std::printf("Strip::setStriPType ERROR -- not enough pixels for this strip to be set as a TwentySquared tile.  Please check your PixelPusher's pixel.rc file.\n");
+		std::printf("Strip::setStripType ERROR -- not enough pixels for this strip to be set as a TwentySquared tile.  Please check your PixelPusher's pixel.rc file.\n");
 	}
 	mStripType = type;
 }

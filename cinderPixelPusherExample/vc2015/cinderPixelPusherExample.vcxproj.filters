@@ -1,0 +1,139 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="blocks">
+      <UniqueIdentifier>{ef80a664-c10d-47b0-80e8-3cea0dfcdb10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blocks\ofxAsio">
+      <UniqueIdentifier>{1c40f0b1-9c5c-48a9-9dc2-6d7db7ce9e02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blocks\ofxPixelPusher">
+      <UniqueIdentifier>{6aef7e9d-1bb7-4af7-aa96-6d1e5a7d6985}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blocks\ofxAsio\src">
+      <UniqueIdentifier>{7231ecae-c92f-4d3b-b9d2-d6f4a68a863b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blocks\ofxPixelPusher\src">
+      <UniqueIdentifier>{581df021-5e57-4da9-8c0d-c3a80b303624}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\cinderPixelPusherExampleApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cinderPixelPusherExampleApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClInclude Include="..\include\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\..\ofxAsio\src\TcpClient.cpp">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ofxAsio\src\TcpServer.cpp">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ofxAsio\src\TcpSession.cpp">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ofxAsio\src\TcpSocket.cpp">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ofxAsio\src\UdpReceiver.cpp">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ofxAsio\src\UdpSender.cpp">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ofxAsio\src\UdpSocket.cpp">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DeviceHeader.cpp">
+      <Filter>blocks\ofxPixelPusher\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DiscoveryService.cpp">
+      <Filter>blocks\ofxPixelPusher\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Pixel.cpp">
+      <Filter>blocks\ofxPixelPusher\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\PixelPusher.cpp">
+      <Filter>blocks\ofxPixelPusher\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Strip.cpp">
+      <Filter>blocks\ofxPixelPusher\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\ofxAsio\src\Asio.h">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\ofxAsio\src\Datagram.h">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\ofxAsio\src\Endpoint.h">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\ofxAsio\src\ofxAsio.h">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\ofxAsio\src\TcpClient.h">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\ofxAsio\src\TcpServer.h">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\ofxAsio\src\TcpSession.h">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\ofxAsio\src\TcpSocket.h">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\ofxAsio\src\UdpReceiver.h">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\ofxAsio\src\UdpSender.h">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\ofxAsio\src\UdpSocket.h">
+      <Filter>blocks\ofxAsio\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DeviceHeader.h">
+      <Filter>blocks\ofxPixelPusher\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DiscoveryService.h">
+      <Filter>blocks\ofxPixelPusher\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Pixel.h">
+      <Filter>blocks\ofxPixelPusher\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\PixelPusher.h">
+      <Filter>blocks\ofxPixelPusher\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Strip.h">
+      <Filter>blocks\ofxPixelPusher\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Utilities.h">
+      <Filter>blocks\ofxPixelPusher\src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

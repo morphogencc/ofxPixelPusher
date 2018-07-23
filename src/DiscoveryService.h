@@ -45,7 +45,7 @@ namespace ofxPixelPusher {
 		void updatePusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
 		void updatePusherMap();
 		static std::shared_ptr<DiscoveryService> mDiscoveryService;
-		std::shared_ptr<ofxAsio::UdpReceiver> mDiscoveryServiceSocket;
+		std::shared_ptr<ofxAsio::sockets::UdpReceiver> mDiscoveryServiceSocket;
 		int mMessageFlag;
 		static const int mIncomingPacketSize = 76;
 		static const int mPort = 7331;

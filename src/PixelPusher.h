@@ -17,7 +17,7 @@
 #include <chrono>
 #include "Strip.h"
 #include "DeviceHeader.h"
-#include "ofxAsio.h"
+#include "Asio.h"
 
 namespace ofxPixelPusher {
 

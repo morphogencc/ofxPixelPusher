@@ -259,7 +259,7 @@ void PixelPusher::sendPacket() {
 				}
 				mPacketNumber++;
 
-				std::shared_ptr<ofxAsio::Datagram> packet = std::make_shared<ofxAsio::Datagram>(mPacket, getIpAddress(), getPort());
+				std::shared_ptr<ofxAsio::sockets::Datagram> packet = std::make_shared<ofxAsio::sockets::Datagram>(mPacket, getIpAddress(), getPort());
 				mCardThreadSender->send(packet);
 				payload = false;
 				std::this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
@@ -417,7 +417,7 @@ void PixelPusher::createStrips() {
 void PixelPusher::createCardThread() {
 	createStrips();
 
-	mCardThreadSender = std::make_shared<ofxAsio::UdpSender>();
+	mCardThreadSender = ofxAsio::sockets::UdpSender::make();
 	if (mLogLevel == DEBUG) {
 		std::printf("PixelPusher::createCardThread -- Connected to PixelPusher %s on port %d\n", getIpAddress().c_str(), mPort);
 	}

@@ -17,7 +17,7 @@
 #include <chrono>
 #include "Strip.h"
 #include "DeviceHeader.h"
-#include "Asio.h"
+#include "Udp.h"
 
 namespace ofxPixelPusher {
 
@@ -104,7 +104,7 @@ namespace ofxPixelPusher {
 		bool mRunCardThread;
 		LogLevel mLogLevel;
 		std::thread mCardThread;
-		std::shared_ptr<ofxAsio::sockets::UdpSender> mCardThreadSender;
+		std::shared_ptr<ofxAsio::udp::UdpSender> mCardThreadSender;
 		std::vector<unsigned char> mStripFlags;
 		std::deque<std::shared_ptr<Strip> > mStrips;
 	};

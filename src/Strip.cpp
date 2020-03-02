@@ -117,7 +117,7 @@ void Strip::setPixelsFromTex() {
 			scrapeTexture(subTexSrc, mSubTexWidth, mSubTexHeight, mTexDepth);
 
 			//do I need to free(subTexSrc)? or delete?
-			delete subTexSrc;
+			delete[] subTexSrc;
 		}
 		else {
 			scrapeTexture(mTexSrc, mTexWidth, mTexHeight, mTexDepth);

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <algorithm>
+#include <cmath>
+#include <cstdio>
 
 namespace ofxPixelPusher {
 
@@ -141,3 +143,4 @@ namespace ofxPixelPusher {
 		return std::max(lower, std::min(n, upper));
 	}
 }
+

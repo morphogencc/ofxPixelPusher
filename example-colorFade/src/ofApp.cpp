@@ -1,29 +1,38 @@
 #include "ofApp.h"
 
+void ofApp::exit(){
+    ofLogNotice() << "PixelPusher app exited";
+}
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetWindowTitle("ofxPixelPusher -- example-colorFade");
-	mDiscoveryService = ofxPixelPusher::DiscoveryService::getInstance();
-	mDiscoveryService->addRegistrationCallback([=](std::shared_ptr<ofxPixelPusher::PixelPusher> pusher) {
-		pusher->setPowerScale(0.5);
-		pusher->setColorCorrection(ofxPixelPusher::Pixel::SMD5050);
-		pusher->setColorTemperature(ofxPixelPusher::Pixel::UNCORRECTED_TEMPERATURE);
-	});
+    mDiscoveryService = ofxPixelPusher::DiscoveryService::getInstance();
+    mDiscoveryService->addRegistrationCallback([=](std::shared_ptr<ofxPixelPusher::PixelPusher> pusher) {
+        pusher->setPowerScale(0.5);
+        pusher->setColorCorrection(ofxPixelPusher::Pixel::SMD5050);
+        pusher->setColorTemperature(ofxPixelPusher::Pixel::UNCORRECTED_TEMPERATURE);
+    });
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	for (auto pusher : mDiscoveryService->getPushers()) {
-		for (auto strip : pusher->getStrips()) {
-			strip->setPixelsHSB(hueCounter, 1.0, 1.0);
-		}
-	}
+    for (auto pusher : mDiscoveryService->getPushers()) {
+        for (auto strip : pusher->getStrips()) {
+            strip->setPixelsHSB(hueCounter, 1.0, 1.0);
+        }
+    }
 	hueCounter++;
 	hueCounter = hueCounter % 360;
+
+    ofColor c;
+    c.setHsb((float)hueCounter/360.0f * 255,255,255);
+    ofSetBackgroundColor(c);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+
 
 }
 

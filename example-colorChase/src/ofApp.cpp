@@ -17,7 +17,7 @@ void ofApp::update(){
 	for (auto pusher : mDiscoveryService->getPushers()) {
 		for (auto strip : pusher->getStrips()) {
 			while (mIndex < strip->getNumberOfPixels()) {
-				strip->setPixelHSB(mIndex, (mStartingHue + mIndex) % 360, 1.0, 1.0);
+                strip->setPixelHSB(mIndex, (mStartingHue + mIndex) % 60, 1.0, 1.0);
 				mIndex++;
 			}
 			mIndex = 0;

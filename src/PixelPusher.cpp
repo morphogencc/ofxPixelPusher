@@ -215,7 +215,7 @@ void PixelPusher::sendPacket() {
 
 		mTotalDelay = mThreadDelay + mThreadExtraDelay + mExtraDelayMsec;
 
-		if (mLogLevel == DEBUG) {
+        if (mLogLevel == TESTING) {
 			std::printf("PixelPusher::sendPacket -- Updating total delay for PixelPusher %s to %ld", getMacAddress().c_str(), mTotalDelay);
 		}
 
@@ -224,7 +224,7 @@ void PixelPusher::sendPacket() {
 		}
 
 		while (!remainingStrips.empty()) {
-			if (mLogLevel == DEBUG) {
+            if (mLogLevel == TESTING) {
 				std::printf("PixelPusher::sendPacket -- Sending data to PixelPusher %s at %s:%d", getMacAddress().c_str(), getIpAddress().c_str(), mPort);
 			}
 			payload = false;
@@ -254,7 +254,7 @@ void PixelPusher::sendPacket() {
 			}
 
 			if (payload) {
-				if (mLogLevel == DEBUG) {
+                if (mLogLevel == TESTING) {
 					std::printf("PixelPusher::sendPacket -- Payload confirmed; sending packet of %lu bytes", mPacket.size());
 				}
 				mPacketNumber++;
@@ -267,7 +267,7 @@ void PixelPusher::sendPacket() {
 		}
 	}
 
-	if (mLogLevel == DEBUG) {
+    if (mLogLevel == TESTING) {
 		std::printf("PixelPusher::sendPacket -- Closing Card Thread for PixelPusher %s\n", getMacAddress().c_str());
 	}
 }
@@ -418,7 +418,7 @@ void PixelPusher::createCardThread() {
 	createStrips();
 
 	mCardThreadSender = ofxAsio::udp::UdpSender::make();
-	if (mLogLevel == DEBUG) {
+    if (mLogLevel == TESTING) {
 		std::printf("PixelPusher::createCardThread -- Connected to PixelPusher %s on port %d\n", getIpAddress().c_str(), mPort);
 	}
 	mPacketNumber = 0;

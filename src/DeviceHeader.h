@@ -1,9 +1,10 @@
 #pragma once
 
 #include <memory>
-#include <string>
+#include <cstring>
 #include <stdio.h>
 #include <iostream>
+
 
 namespace ofxPixelPusher {
 

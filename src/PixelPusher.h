@@ -23,7 +23,7 @@ namespace ofxPixelPusher {
 
 	enum LogLevel {
 		PRODUCTION,
-		DEBUG
+        TESTING
 	};
 
 	class PixelPusher {

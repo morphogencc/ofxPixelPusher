@@ -117,7 +117,7 @@ DiscoveryService::~DiscoveryService() {
 }
 
 void DiscoveryService::update(std::string udpMessage) {
-	if (mLogLevel == DEBUG) {
+    if (mLogLevel == TESTING) {
 		std::printf("DiscoveryService::update -- Updating registry...\n");
 	}
 	mUpdateMutex.lock();
@@ -144,14 +144,14 @@ void DiscoveryService::update(std::string udpMessage) {
 		if (!mPusherMap[macAddress]->isEqual(incomingDevice)) {
 			//if the pushers are not equal, replace it with this one
 			updatePusher(macAddress, incomingDevice);
-			if (mLogLevel == DEBUG) {
+            if (mLogLevel == TESTING) {
 				std::printf("DiscoveryService::update -- Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
 			}
 		}
 		else {
 			//if they're the same, then just update it
 			mPusherMap[macAddress]->updateVariables(incomingDevice);
-			if (mLogLevel == DEBUG) {
+            if (mLogLevel == TESTING) {
 				std::printf("DiscoveryService::update -- Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
 			}
 			if (incomingDevice->getDeltaSequence() > 3) {

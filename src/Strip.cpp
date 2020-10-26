@@ -18,7 +18,7 @@ Strip::Strip(short stripNumber, int length) {
 	mIsRGBOW = false;
 
 	mPowerScale = 1.0;
-	mID = NULL;
+    mID = -1;
 	mStripType = STRIP;
 
 	resetTexture();

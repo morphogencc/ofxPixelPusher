@@ -32,8 +32,6 @@ namespace ofxPixelPusher {
 		std::vector<std::shared_ptr<PixelPusher> > getPushers();
 		std::vector<std::shared_ptr<PixelPusher> > getGroup(long groupId);
 		std::shared_ptr<PixelPusher> getController(long groupId, long controllerId);
-		void setLogLevel(LogLevel log_level);
-		LogLevel getLogLevel();
 		void setPowerScale(double power_scale);
 		double getPowerScale();
 		void addRegistrationCallback(std::function<void(std::shared_ptr<PixelPusher>)> callback_function);
@@ -53,7 +51,6 @@ namespace ofxPixelPusher {
 		bool mRunUpdateMapThread;
 		int mFrameLimit;
 		double mPowerScale;
-		LogLevel mLogLevel;
 		std::map<std::string, std::shared_ptr<PixelPusher> > mPusherMap;
 		std::map<std::string, long> mLastSeenMap;
 		std::multimap<long, std::shared_ptr<PixelPusher> > mGroupMap;

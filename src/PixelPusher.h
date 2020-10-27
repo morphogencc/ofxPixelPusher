@@ -21,11 +21,6 @@
 
 namespace ofxPixelPusher {
 
-	enum LogLevel {
-		PRODUCTION,
-        TESTING
-	};
-
 	class PixelPusher {
 	public:
 		PixelPusher(DeviceHeader* header);
@@ -45,6 +40,8 @@ namespace ofxPixelPusher {
 		void setAntilog(bool antilog);
 		std::string getMacAddress();
 		std::string getIpAddress();
+        float getSoftwareVersion();
+        short getHardwareVersion();
 		long getGroupId();
 		long getControllerId();
 		long getDeltaSequence();
@@ -66,8 +63,7 @@ namespace ofxPixelPusher {
 		bool isAlive();
 		void createCardThread();
 		void destroyCardThread();
-		void setLogLevel(LogLevel log_level);
-		LogLevel getLogLevel();
+
 	protected:
 		void createStrips();
 		void addStrip(std::shared_ptr<Strip> strip);
@@ -102,7 +98,6 @@ namespace ofxPixelPusher {
 		long mThreadExtraDelay;
 		long mTotalDelay;
 		bool mRunCardThread;
-		LogLevel mLogLevel;
 		std::thread mCardThread;
 		std::shared_ptr<ofxAsio::udp::UdpSender> mCardThreadSender;
 		std::vector<unsigned char> mStripFlags;

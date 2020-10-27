@@ -7,6 +7,7 @@
 #include <memory>
 #include "DiscoveryService.h"
 #include "DeviceHeader.h"
+#include "ofMain.h"
 
 using namespace ofxPixelPusher;
 
@@ -73,17 +74,6 @@ std::shared_ptr<PixelPusher> DiscoveryService::getController(long groupId, long 
 	return nullPtr;
 }
 
-void DiscoveryService::setLogLevel(LogLevel log_level) {
-	mLogLevel = log_level;
-	addRegistrationCallback([=](std::shared_ptr<PixelPusher> pusher) {
-		pusher->setLogLevel(mLogLevel);
-	});
-}
-
-LogLevel DiscoveryService::getLogLevel() {
-	return mLogLevel;
-}
-
 void DiscoveryService::setPowerScale(double power_scale) {
 	mPowerScale = power_scale;
 	addRegistrationCallback([=](std::shared_ptr<PixelPusher> pusher) {
@@ -102,24 +92,23 @@ DiscoveryService::DiscoveryService() {
 		DiscoveryService::getInstance()->update(datagram->getDataAsString());
 	});
 	mDiscoveryServiceSocket->start();
-	std::printf("DiscoveryService::DiscoveryService -- Starting PixelPusher Discovery Service...\n");
+    ofLogNotice("DiscoveryService") << "Starting PixelPusher Discovery Service...";
 
 	mAutoThrottle = true;
 	mFrameLimit = 60;
-	mLogLevel = PRODUCTION;
 	mUpdateMapThread = std::thread(&DiscoveryService::updatePusherMap, this);
 }
 
 DiscoveryService::~DiscoveryService() {
 	if (mUpdateMapThread.joinable()) {
+        mRunUpdateMapThread = false;
 		mUpdateMapThread.join();
+        ofLogNotice("DiscoveryService") << "Update thread joined";
 	}
 }
 
 void DiscoveryService::update(std::string udpMessage) {
-    if (mLogLevel == TESTING) {
-		std::printf("DiscoveryService::update -- Updating registry...\n");
-	}
+    ofLogVerbose() << "DiscoveryService::update -- Updating registry...";
 	mUpdateMutex.lock();
 	DeviceHeader* header;
 
@@ -136,24 +125,20 @@ void DiscoveryService::update(std::string udpMessage) {
 
 	if (mPusherMap.count(macAddress) == 0) {
 		//does not already exist in the map
-		addNewPusher(macAddress, incomingDevice);
-		std::printf("DiscoveryService::update -- Adding new PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
+		addNewPusher(macAddress, incomingDevice);        
+        ofLogNotice("DiscoveryService") << "Adding new PixelPusher " << macAddress.c_str() << " at address " << ipAddress.c_str() << " firmware version: " << incomingDevice->getSoftwareVersion() << " Hardware version: " << incomingDevice->getHardwareVersion();
 	}
 	else {
 		//already exists in the map
 		if (!mPusherMap[macAddress]->isEqual(incomingDevice)) {
 			//if the pushers are not equal, replace it with this one
 			updatePusher(macAddress, incomingDevice);
-            if (mLogLevel == TESTING) {
-				std::printf("DiscoveryService::update -- Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
-			}
+            ofLogVerbose() << "DiscoveryService::update -- Updating PixelPusher " << macAddress.c_str() << " at address" << ipAddress.c_str();
 		}
 		else {
 			//if they're the same, then just update it
 			mPusherMap[macAddress]->updateVariables(incomingDevice);
-            if (mLogLevel == TESTING) {
-				std::printf("DiscoveryService::update -- Updating PixelPusher %s at address %s\n", macAddress.c_str(), ipAddress.c_str());
-			}
+            ofLogVerbose() << "DiscoveryService::update -- Updating PixelPusher " << macAddress.c_str() << " at address" << ipAddress.c_str();
 			if (incomingDevice->getDeltaSequence() > 3) {
 				mPusherMap[macAddress]->increaseExtraDelay(5);
 			}

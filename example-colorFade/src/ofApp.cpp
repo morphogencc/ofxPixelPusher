@@ -1,9 +1,5 @@
 #include "ofApp.h"
 
-void ofApp::exit(){
-    ofLogNotice() << "PixelPusher app exited";
-}
-
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetWindowTitle("ofxPixelPusher -- example-colorFade");

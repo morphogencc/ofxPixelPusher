@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <ctime>
 #include <iterator>
+#include "ofMain.h"
 
 using namespace ofxPixelPusher;
 
@@ -25,7 +26,6 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
 	mThreadExtraDelay = 0;
 	mTotalDelay = 0;
 	mRunCardThread = NULL;
-	mLogLevel = PRODUCTION;
 
 	mMulticast = false;
 	mMulticastPrimary = false;
@@ -39,7 +39,7 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
 	int packetLength = header->getPacketRemainderLength();
 
 	if (packetLength < 28) {
-		std::printf("Packet size is too small! PixelPusher can't be created.\n");
+        ofLogWarning() << "Packet size is too small! PixelPusher can't be created.";
 	}
 
 	memcpy(&mStripsAttached, &packetRemainder.get()[0], 1);
@@ -85,6 +85,10 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
 }
 
 PixelPusher::~PixelPusher() {
+    if(mCardThread.joinable()) {
+        mRunCardThread = false;
+        mCardThread.join();
+    }
 }
 
 int PixelPusher::getNumberOfStrips() {
@@ -114,7 +118,7 @@ std::shared_ptr<Strip> PixelPusher::getStrip(int stripNumber) {
 		return mStrips.at(stripNumber);
 	}
 	else {
-		std::printf("PixelPusher::getStrip ERROR -- Invalid strip number %d.  Returning empty strip.\n", stripNumber);
+        ofLogError("PixelPusher") << "getStrip ERROR -- Invalid strip number " << stripNumber << ". Returning empty strip.";
 		return std::shared_ptr<Strip>();
 	}
 }
@@ -128,7 +132,7 @@ int PixelPusher::getPixelsPerStrip(int stripNumber) {
 		return mStrips.at(stripNumber)->getLength();
 	}
 	else {
-		std::printf("PixelPusher::getPixelsPerStrip ERROR -- Invalid strip number %d.\n", stripNumber);
+        ofLogError("PixelPusher") << "getPixelsPerStrip ERROR -- Invalid strip number " << stripNumber << ".";
 		return 0;
 	}
 }
@@ -138,7 +142,7 @@ void PixelPusher::setStripValues(int stripNumber, unsigned char red, unsigned ch
 		mStrips.at(stripNumber)->setPixels(red, green, blue);
 	}
 	else {
-		std::printf("PixelPusher::setStripValues ERROR -- Invalid strip number %d.\n", stripNumber);
+        ofLogError("PixelPusher") << "setStripValues ERROR -- Invalid strip number " << stripNumber << ".";
 	}
 }
 
@@ -147,7 +151,7 @@ void PixelPusher::setStripValues(int stripNumber, std::vector<std::shared_ptr<Pi
 		mStrips.at(stripNumber)->setPixels(pixels);
 	}
 	else {
-		std::printf("PixelPusher::setStripValues ERROR -- Invalid strip number %d.\n", stripNumber);
+        ofLogError("PixelPusher") << "setStripValues ERROR -- Invalid strip number " << stripNumber << ".";
 	}
 }
 
@@ -162,7 +166,7 @@ void PixelPusher::setPowerScale(int stripNumber, double powerScale) {
 		mStrips.at(stripNumber)->setPowerScale(powerScale);
 	}
 	else {
-		std::printf("PixelPusher::setPowerScale ERROR -- Invalid strip number %d.\n", stripNumber);
+        ofLogError("PixelPusher") << "setPowerScale ERROR -- Invalid strip number " << stripNumber << ".";
 	}
 }
 
@@ -194,6 +198,15 @@ std::string PixelPusher::getIpAddress() {
 	return mDeviceHeader->getIpAddressString();
 }
 
+
+float PixelPusher::getSoftwareVersion() {
+    return mDeviceHeader->getSoftwareRevision()/ 100.0f;
+}
+
+short PixelPusher::getHardwareVersion() {
+    return mDeviceHeader->getHardwareRevision();
+}
+
 void PixelPusher::sendPacket() {
 	bool payload = false;
 	mThreadDelay = 16.0;
@@ -215,18 +228,14 @@ void PixelPusher::sendPacket() {
 
 		mTotalDelay = mThreadDelay + mThreadExtraDelay + mExtraDelayMsec;
 
-        if (mLogLevel == TESTING) {
-			std::printf("PixelPusher::sendPacket -- Updating total delay for PixelPusher %s to %ld", getMacAddress().c_str(), mTotalDelay);
-		}
+        //ofLogVerbose("PixelPusher") << "Updating total delay for PixelPusher " << getMacAddress().c_str() << " to " << mTotalDelay;
 
 		if (!mSendReset && remainingStrips.empty()) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(mTotalDelay));
 		}
 
 		while (!remainingStrips.empty()) {
-            if (mLogLevel == TESTING) {
-				std::printf("PixelPusher::sendPacket -- Sending data to PixelPusher %s at %s:%d", getMacAddress().c_str(), getIpAddress().c_str(), mPort);
-			}
+            ofLogVerbose("PixelPusher") << "Sending data to PixelPusher " << getMacAddress().c_str() << " at " << getIpAddress().c_str() << ":" <<  mPort;
 			payload = false;
 			mPacket.clear();
 
@@ -254,9 +263,7 @@ void PixelPusher::sendPacket() {
 			}
 
 			if (payload) {
-                if (mLogLevel == TESTING) {
-					std::printf("PixelPusher::sendPacket -- Payload confirmed; sending packet of %lu bytes", mPacket.size());
-				}
+                ofLogVerbose("PixelPusher") << "Payload confirmed; sending packet of " << mPacket.size() << " bytes";
 				mPacketNumber++;
 
 				std::shared_ptr<ofxAsio::Datagram> packet = std::make_shared<ofxAsio::Datagram>(mPacket, getIpAddress(), getPort());
@@ -267,9 +274,7 @@ void PixelPusher::sendPacket() {
 		}
 	}
 
-    if (mLogLevel == TESTING) {
-		std::printf("PixelPusher::sendPacket -- Closing Card Thread for PixelPusher %s\n", getMacAddress().c_str());
-	}
+    ofLogNotice("PixelPusher") << "Closing Card Thread for PixelPusher " << getMacAddress().c_str();
 }
 
 void PixelPusher::setPusherFlags(long pusherFlags) {
@@ -418,9 +423,7 @@ void PixelPusher::createCardThread() {
 	createStrips();
 
 	mCardThreadSender = ofxAsio::udp::UdpSender::make();
-    if (mLogLevel == TESTING) {
-		std::printf("PixelPusher::createCardThread -- Connected to PixelPusher %s on port %d\n", getIpAddress().c_str(), mPort);
-	}
+    ofLogNotice("PixelPusher") << "Connected to PixelPusher " << getIpAddress().c_str() << " on port " << mPort;
 	mPacketNumber = 0;
 	mThreadExtraDelay = 0;
 	mCardThread = std::thread(&PixelPusher::sendPacket, this);
@@ -431,12 +434,4 @@ void PixelPusher::destroyCardThread() {
 	if (mCardThread.joinable()) {
 		mCardThread.join();
 	}
-}
-
-void PixelPusher::setLogLevel(LogLevel log_level) {
-	mLogLevel = log_level;
-}
-
-LogLevel PixelPusher::getLogLevel() {
-	return mLogLevel;
 }

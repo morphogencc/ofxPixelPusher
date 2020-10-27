@@ -44,6 +44,7 @@ namespace ofxPixelPusher {
 		long mLinkSpeed;
 		std::shared_ptr<unsigned char> mPacketRemainder;
 		int mPacketRemainderLength;
+        bool bStarted;
 	};
 
 }

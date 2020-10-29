@@ -3,7 +3,7 @@
 A C++ implementation of pixelpusher software.
 
 ## Requirements
-This add-on requires [ofxAsio](http://github.com/morphogencc/ofxAsio.git) for networking.  See the repository for how to setup `ofxAsio`.
+This add-on requires [ofxAsio](https://github.com/pierrep/ofxAsio) for networking.  See the repository for how to setup `ofxAsio`.
 
 This implementation of the pixelpusher protocol attempts to be as framework-agnostic as possible; thus, it tries to avoid using openFrameworks-specific classes such as `ofLog` and `ofThread`, instead using the c++ equivalents.  `ofxAsio` follows a similar paradigm, so the entire project should be portable to any other C++ framework.
 

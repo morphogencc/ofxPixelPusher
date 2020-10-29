@@ -25,12 +25,14 @@ DeviceHeader::DeviceHeader(const unsigned char* packet, int packetLength) {
   }
         
   mPacketRemainderLength = packetLength - sHeaderLength;
-  mPacketRemainder = std::shared_ptr<unsigned char>(new unsigned char[mPacketRemainderLength]);
-  memcpy(&mPacketRemainder.get()[0], &packet[sHeaderLength], mPacketRemainderLength);
+  //mPacketRemainder = std::shared_ptr<unsigned char>(new unsigned char[mPacketRemainderLength]);
+  mPacketRemainder = new unsigned char[mPacketRemainderLength];
+  memcpy(&mPacketRemainder[0], &packet[sHeaderLength], mPacketRemainderLength);
 }
 
 DeviceHeader::~DeviceHeader() {
-  ofLogNotice() << "DeviceHeader deconstructed";
+  ofLogVerbose() << "DeviceHeader deconstructed";
+  delete [] mPacketRemainder;
 }
 
 std::string DeviceHeader::getMacAddressString() {
@@ -73,9 +75,12 @@ long DeviceHeader::getLinkSpeed() {
   return mLinkSpeed;
 }
 
-std::shared_ptr<unsigned char> DeviceHeader::getPacketRemainder() {
+unsigned char* DeviceHeader::getPacketRemainder() {
   return mPacketRemainder;
 }
+//std::shared_ptr<unsigned char> DeviceHeader::getPacketRemainder() {
+//  return mPacketRemainder;
+//}
 
 int DeviceHeader::getPacketRemainderLength() {
   return mPacketRemainderLength;

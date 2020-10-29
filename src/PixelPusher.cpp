@@ -6,7 +6,8 @@
 
 using namespace ofxPixelPusher;
 
-PixelPusher::PixelPusher(DeviceHeader* header) {
+//PixelPusher::PixelPusher(DeviceHeader* header) {
+PixelPusher::PixelPusher(std::shared_ptr<DeviceHeader> header) {
 	mArtnetUniverse = 0;
 	mArtnetChannel = 0;
 	mPort = 9897;
@@ -21,11 +22,12 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
 	mGroupId = 0;
 	mSegments = 0;
 	mPowerDomain = 0;
+    mPusherFlags = 0;
 	mPacketNumber = 0;
 	mThreadDelay = 0;
 	mThreadExtraDelay = 0;
 	mTotalDelay = 0;
-	mRunCardThread = NULL;
+	mRunCardThread = NULL;    
 
 	mMulticast = false;
 	mMulticastPrimary = false;
@@ -34,27 +36,31 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
 	mResetSentAt = std::clock() / CLOCKS_PER_SEC;
 	mSendReset = false;
 
-	mDeviceHeader = header;
-	std::shared_ptr<unsigned char> packetRemainder = header->getPacketRemainder();
+    mMacAddress = header->getMacAddressString();
+    mIpAddress = header->getIpAddressString();
+    mSoftwareVersion = header->getSoftwareRevision()/ 100.0f;
+    mHardwareVersion = header->getHardwareRevision();
+
+    unsigned char* packetRemainder = header->getPacketRemainder();
 	int packetLength = header->getPacketRemainderLength();
 
 	if (packetLength < 28) {
         ofLogWarning() << "Packet size is too small! PixelPusher can't be created.";
 	}
 
-	memcpy(&mStripsAttached, &packetRemainder.get()[0], 1);
-	memcpy(&mMaxStripsPerPacket, &packetRemainder.get()[1], 1);
-	memcpy(&mPixelsPerStrip, &packetRemainder.get()[2], 2);
-	memcpy(&mUpdatePeriod, &packetRemainder.get()[4], 4);
-	memcpy(&mPowerTotal, &packetRemainder.get()[8], 4);
-	memcpy(&mDeltaSequence, &packetRemainder.get()[12], 4);
-	memcpy(&mControllerId, &packetRemainder.get()[16], 4);
-	memcpy(&mGroupId, &packetRemainder.get()[20], 4);
-	memcpy(&mArtnetUniverse, &packetRemainder.get()[24], 2);
-	memcpy(&mArtnetChannel, &packetRemainder.get()[26], 2);
+    memcpy(&mStripsAttached, &packetRemainder[0], 1);
+    memcpy(&mMaxStripsPerPacket, &packetRemainder[1], 1);
+    memcpy(&mPixelsPerStrip, &packetRemainder[2], 2);
+    memcpy(&mUpdatePeriod, &packetRemainder[4], 4);
+    memcpy(&mPowerTotal, &packetRemainder[8], 4);
+    memcpy(&mDeltaSequence, &packetRemainder[12], 4);
+    memcpy(&mControllerId, &packetRemainder[16], 4);
+    memcpy(&mGroupId, &packetRemainder[20], 4);
+    memcpy(&mArtnetUniverse, &packetRemainder[24], 2);
+    memcpy(&mArtnetChannel, &packetRemainder[26], 2);
 
 	if (packetLength < 28 && header->getSoftwareRevision() > 100) {
-		memcpy(&mPort, &packetRemainder.get()[28], 2);
+        memcpy(&mPort, &packetRemainder[28], 2);
 	}
 	else {
 		mPort = 9897;
@@ -64,7 +70,7 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
 	mStripFlags.resize(stripFlagSize);
 
 	if (packetLength > 30 && header->getSoftwareRevision() > 108) {
-		memcpy(&mStripFlags[0], &packetRemainder.get()[30], stripFlagSize);
+        memcpy(&mStripFlags[0], &packetRemainder[30], stripFlagSize);
 	}
 	else {
 		for (int i = 0; i < stripFlagSize; i++) {
@@ -75,10 +81,10 @@ PixelPusher::PixelPusher(DeviceHeader* header) {
 	if (packetLength > 30 + stripFlagSize && header->getSoftwareRevision() > 108) {
 		// set Pusher flags
 		long pusherFlags;
-		memcpy(&pusherFlags, &packetRemainder.get()[32 + stripFlagSize], 4);
+        memcpy(&pusherFlags, &packetRemainder[32 + stripFlagSize], 4);
 		setPusherFlags(pusherFlags);
-		memcpy(&mSegments, &packetRemainder.get()[36 + stripFlagSize], 4);
-		memcpy(&mPowerDomain, &packetRemainder.get()[40 + stripFlagSize], 4);
+        memcpy(&mSegments, &packetRemainder[36 + stripFlagSize], 4);
+        memcpy(&mPowerDomain, &packetRemainder[40 + stripFlagSize], 4);
 	}
 
 	mPacket.reserve(400 * mMaxStripsPerPacket); //too high, can be reduced
@@ -88,6 +94,7 @@ PixelPusher::~PixelPusher() {
     if(mCardThread.joinable()) {
         mRunCardThread = false;
         mCardThread.join();
+         ofLogVerbose() << "Destruct Pixel Pusher: Card Thread Joined";
     }
 }
 
@@ -191,20 +198,20 @@ void PixelPusher::setAntilog(bool antilog) {
 }
 
 std::string PixelPusher::getMacAddress() {
-	return mDeviceHeader->getMacAddressString();
+    return mMacAddress;
 }
 
 std::string PixelPusher::getIpAddress() {
-	return mDeviceHeader->getIpAddressString();
+    return mIpAddress;
 }
 
 
 float PixelPusher::getSoftwareVersion() {
-    return mDeviceHeader->getSoftwareRevision()/ 100.0f;
+    return mSoftwareVersion;
 }
 
 short PixelPusher::getHardwareVersion() {
-    return mDeviceHeader->getHardwareRevision();
+    return mHardwareVersion;
 }
 
 void PixelPusher::sendPacket() {
@@ -274,7 +281,7 @@ void PixelPusher::sendPacket() {
 		}
 	}
 
-    ofLogNotice("PixelPusher") << "Closing Card Thread for PixelPusher " << getMacAddress().c_str();
+    ofLogVerbose("PixelPusher") << "Closing Card Thread for PixelPusher " << getMacAddress().c_str();
 }
 
 void PixelPusher::setPusherFlags(long pusherFlags) {
@@ -396,7 +403,7 @@ bool PixelPusher::isEqual(std::shared_ptr<PixelPusher> pusher) {
 		return false;
 	}
 
-	if (getPusherFlags() != pusher->getPusherFlags()) {
+    if (mPusherFlags != pusher->getPusherFlags()) {
 		return false;
 	}
 
@@ -430,6 +437,7 @@ void PixelPusher::createCardThread() {
 }
 
 void PixelPusher::destroyCardThread() {
+    ofLogVerbose("PixelPusher") << "Destroy card thread!";
 	mRunCardThread = false;
 	if (mCardThread.joinable()) {
 		mCardThread.join();

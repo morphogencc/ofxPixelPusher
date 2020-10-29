@@ -23,7 +23,8 @@ namespace ofxPixelPusher {
 
 	class PixelPusher {
 	public:
-		PixelPusher(DeviceHeader* header);
+        //PixelPusher(DeviceHeader* header);
+        PixelPusher(std::shared_ptr<DeviceHeader> header);
 		~PixelPusher();
 		int getNumberOfStrips();
 		std::deque<std::shared_ptr<Strip> > getStrips();
@@ -71,9 +72,12 @@ namespace ofxPixelPusher {
 		static const int mTimeoutTime = 5;
 		static const int mFrameLimit = 60;
 		long mPusherFlags;
-		DeviceHeader* mDeviceHeader;
 		long mPacketNumber;
 		std::vector<unsigned char> mPacket;
+        std::string mMacAddress;
+        std::string mIpAddress;
+        short mSoftwareVersion;
+        short mHardwareVersion;
 		short mPort;
 		short mStripsAttached;
 		short mMaxStripsPerPacket;

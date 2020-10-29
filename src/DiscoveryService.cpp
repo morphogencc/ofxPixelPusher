@@ -100,28 +100,60 @@ DiscoveryService::DiscoveryService() {
 }
 
 DiscoveryService::~DiscoveryService() {
+    ofLogVerbose("Discovery Service") << "Shutting down...";
+
+    for (std::map<std::string, std::shared_ptr<PixelPusher> >::iterator pusher = mPusherMap.begin(); pusher != mPusherMap.end();) {
+        //pusher->first is Mac Address, pusher->second is the shared pointer to the PixelPusher
+
+        for (auto callback : mRemovalCallbacks) {
+            callback(pusher->second);
+        }
+        ofLogVerbose() << "DiscoveryService::updatePusherMap -- Removing PixelPusher " << pusher->first.c_str() << " from all maps.";
+        pusher->second->destroyCardThread();
+        //remove from multimap -- more complicated
+        for (auto it = mGroupMap.lower_bound(pusher->second->getGroupId()); it != mGroupMap.end();) {
+            if (it->second->isEqual(pusher->second)) {
+                mGroupMap.erase(it++);
+            }
+            else {
+                ++it;
+            }
+        }
+        //remove pusher from maps
+        mLastSeenMap.erase(pusher->first);
+        mPusherMap.erase(pusher++);
+    }
+
 	if (mUpdateMapThread.joinable()) {
         mRunUpdateMapThread = false;
 		mUpdateMapThread.join();
-        ofLogNotice("DiscoveryService") << "Update thread joined";
-	}
+        ofLogVerbose("DiscoveryService") << "Update thread joined";
+	}    
+
+
+
+    ofLogVerbose("DiscoveryService") << "mPusherMap has " << mPusherMap.size() << " entries still in it.";
+
 }
 
 void DiscoveryService::update(std::string udpMessage) {
     ofLogVerbose() << "DiscoveryService::update -- Updating registry...";
 	mUpdateMutex.lock();
-	DeviceHeader* header;
+    //DeviceHeader* header;
 
-	header = new DeviceHeader(reinterpret_cast<const unsigned char*> (udpMessage.c_str()), udpMessage.length());
+    std::shared_ptr<DeviceHeader> header(new DeviceHeader(reinterpret_cast<const unsigned char*> (udpMessage.c_str()), udpMessage.length()));
+
+    //header = new DeviceHeader(reinterpret_cast<const unsigned char*> (udpMessage.c_str()), udpMessage.length());
 	if (header->getDeviceType() != PIXELPUSHER) {
 		//if the device type isn't PixelPusher, end processing it right here.
 		return;
 	}
 
 	std::shared_ptr<PixelPusher> incomingDevice(new PixelPusher(header));
+    //delete header;
 	std::string macAddress = incomingDevice->getMacAddress();
 	std::string ipAddress = incomingDevice->getIpAddress();
-	mLastSeenMap[macAddress] = std::clock() / CLOCKS_PER_SEC;
+    mLastSeenMap[macAddress] = std::clock() / CLOCKS_PER_SEC;
 
 	if (mPusherMap.count(macAddress) == 0) {
 		//does not already exist in the map
@@ -133,12 +165,12 @@ void DiscoveryService::update(std::string udpMessage) {
 		if (!mPusherMap[macAddress]->isEqual(incomingDevice)) {
 			//if the pushers are not equal, replace it with this one
 			updatePusher(macAddress, incomingDevice);
-            ofLogVerbose() << "DiscoveryService::update -- Updating PixelPusher " << macAddress.c_str() << " at address" << ipAddress.c_str();
+            ofLogVerbose() << "DiscoveryService::update -- Refreshing PixelPusher " << macAddress.c_str() << " at address " << ipAddress.c_str();
 		}
 		else {
 			//if they're the same, then just update it
 			mPusherMap[macAddress]->updateVariables(incomingDevice);
-            ofLogVerbose() << "DiscoveryService::update -- Updating PixelPusher " << macAddress.c_str() << " at address" << ipAddress.c_str();
+            ofLogVerbose() << "DiscoveryService::update -- Updating PixelPusher " << macAddress.c_str() << " at address " << ipAddress.c_str();
 			if (incomingDevice->getDeltaSequence() > 3) {
 				mPusherMap[macAddress]->increaseExtraDelay(5);
 			}
@@ -148,7 +180,7 @@ void DiscoveryService::update(std::string udpMessage) {
 		}
 	}
 
-	mUpdateMutex.unlock();
+    mUpdateMutex.unlock();
 }
 
 void DiscoveryService::addNewPusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher) {
@@ -174,7 +206,7 @@ void DiscoveryService::updatePusherMap() {
 				for (auto callback : mRemovalCallbacks) {
 					callback(pusher->second);
 				}
-				std::printf("DiscoveryService::updatePusherMap -- Removing PixelPusher %s from all maps.\n", pusher->first.c_str());
+                ofLogNotice() << "DiscoveryService::updatePusherMap -- Removing PixelPusher " << pusher->first.c_str() << " from all maps.";
 				pusher->second->destroyCardThread();
 				//remove from multimap -- more complicated
 				for (auto it = mGroupMap.lower_bound(pusher->second->getGroupId()); it != mGroupMap.end();) {

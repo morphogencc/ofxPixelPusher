@@ -27,7 +27,7 @@ namespace ofxPixelPusher {
 		short getHardwareRevision();
 		short getSoftwareRevision();
 		long getLinkSpeed();
-		std::shared_ptr<unsigned char> getPacketRemainder();
+        unsigned char* getPacketRemainder();
 		int getPacketRemainderLength();
 		bool isMulticast();
 	private:
@@ -42,7 +42,8 @@ namespace ofxPixelPusher {
 		short mHardwareRevision;
 		short mSoftwareRevision;
 		long mLinkSpeed;
-		std::shared_ptr<unsigned char> mPacketRemainder;
+        //std::shared_ptr<unsigned char> mPacketRemainder;
+        unsigned char* mPacketRemainder;
 		int mPacketRemainderLength;
         bool bStarted;
 	};

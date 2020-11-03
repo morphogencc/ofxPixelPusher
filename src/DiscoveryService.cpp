@@ -11,13 +11,13 @@
 
 using namespace ofxPixelPusher;
 
-std::shared_ptr<DiscoveryService> DiscoveryService::mDiscoveryService = nullptr;
+DiscoveryService* DiscoveryService::mDiscoveryService = nullptr;
 
-std::shared_ptr<DiscoveryService> DiscoveryService::getInstance() {
-	if (mDiscoveryService == nullptr) {
-		mDiscoveryService = std::shared_ptr<DiscoveryService>(new DiscoveryService());
-	}
-	return mDiscoveryService;
+DiscoveryService* DiscoveryService::getInstance() {
+    if (mDiscoveryService == nullptr) {
+        mDiscoveryService = new DiscoveryService();
+    }
+    return mDiscoveryService;
 }
 
 int DiscoveryService::getFrameLimit() {
@@ -87,7 +87,8 @@ double DiscoveryService::getPowerScale() {
 
 
 DiscoveryService::DiscoveryService() {
-	mDiscoveryServiceSocket = ofxAsio::udp::UdpReceiver::make("0.0.0.0", 7331);
+    //mDiscoveryServiceSocket = ofxAsio::udp::UdpReceiver::make("0.0.0.0", 7331);
+    mDiscoveryServiceSocket = std::make_shared<ofxAsio::udp::UdpReceiver>("0.0.0.0", 7331);
 	mDiscoveryServiceSocket->addOnReceiveFn([=](std::shared_ptr<ofxAsio::Datagram> datagram) {
 		DiscoveryService::getInstance()->update(datagram->getDataAsString());
 	});
@@ -96,47 +97,34 @@ DiscoveryService::DiscoveryService() {
 
 	mAutoThrottle = true;
 	mFrameLimit = 60;
+    mClosing = false;
 	mUpdateMapThread = std::thread(&DiscoveryService::updatePusherMap, this);
 }
 
 DiscoveryService::~DiscoveryService() {
-    ofLogVerbose("Discovery Service") << "Shutting down...";
 
-    for (std::map<std::string, std::shared_ptr<PixelPusher> >::iterator pusher = mPusherMap.begin(); pusher != mPusherMap.end();) {
-        //pusher->first is Mac Address, pusher->second is the shared pointer to the PixelPusher
+    close();
+}
 
-        for (auto callback : mRemovalCallbacks) {
-            callback(pusher->second);
-        }
-        ofLogVerbose() << "DiscoveryService::updatePusherMap -- Removing PixelPusher " << pusher->first.c_str() << " from all maps.";
-        pusher->second->destroyCardThread();
-        //remove from multimap -- more complicated
-        for (auto it = mGroupMap.lower_bound(pusher->second->getGroupId()); it != mGroupMap.end();) {
-            if (it->second->isEqual(pusher->second)) {
-                mGroupMap.erase(it++);
-            }
-            else {
-                ++it;
-            }
-        }
-        //remove pusher from maps
-        mLastSeenMap.erase(pusher->first);
-        mPusherMap.erase(pusher++);
+void DiscoveryService::close()
+{
+    ofLogNotice("Discovery Service") << "Starting shut down...";
+
+    mClosing = true;
+
+    if (mUpdateMapThread.joinable()) {
+        mRunUpdateMapThread = false;
+        mUpdateMapThread.join();
+        ofLogNotice("DiscoveryService") << "Update thread joined";
     }
 
-	if (mUpdateMapThread.joinable()) {
-        mRunUpdateMapThread = false;
-		mUpdateMapThread.join();
-        ofLogVerbose("DiscoveryService") << "Update thread joined";
-	}    
-
-
-
-    ofLogVerbose("DiscoveryService") << "mPusherMap has " << mPusherMap.size() << " entries still in it.";
+    ofLogNotice("Discovery Service") << "Shutting down complete...";
 
 }
 
 void DiscoveryService::update(std::string udpMessage) {
+    if(mClosing) return;
+
     ofLogVerbose() << "DiscoveryService::update -- Updating registry...";
 	mUpdateMutex.lock();
     //DeviceHeader* header;

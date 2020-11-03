@@ -24,9 +24,9 @@
 namespace ofxPixelPusher {
 
 	class DiscoveryService {
-	public:
-		~DiscoveryService();
-		static std::shared_ptr<DiscoveryService> getInstance();
+    public:
+        ~DiscoveryService();
+        static DiscoveryService* getInstance();
 		int getFrameLimit();
 		std::shared_ptr<PixelPusher> getPusher(int controllerId);
 		std::vector<std::shared_ptr<PixelPusher> > getPushers();
@@ -36,13 +36,15 @@ namespace ofxPixelPusher {
 		double getPowerScale();
 		void addRegistrationCallback(std::function<void(std::shared_ptr<PixelPusher>)> callback_function);
 		void addRemovalCallback(std::function<void(std::shared_ptr<PixelPusher>)> callback_function);
+        void close();
+
 	private:
-		DiscoveryService();
+        DiscoveryService();
 		void update(std::string udpMessage);
 		void addNewPusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
 		void updatePusher(std::string macAddress, std::shared_ptr<PixelPusher> pusher);
 		void updatePusherMap();
-		static std::shared_ptr<DiscoveryService> mDiscoveryService;
+        static DiscoveryService* mDiscoveryService;
 		std::shared_ptr<ofxAsio::udp::UdpReceiver> mDiscoveryServiceSocket;
 		int mMessageFlag;
 		static const int mIncomingPacketSize = 76;
@@ -58,6 +60,7 @@ namespace ofxPixelPusher {
 		std::mutex mUpdateMutex;
 		std::vector<std::function<void(std::shared_ptr<PixelPusher>)>> mRegistrationCallbacks;
 		std::vector<std::function<void(std::shared_ptr<PixelPusher>)>> mRemovalCallbacks;
+        bool mClosing;
 	};
 
 }
